@@ -1,3 +1,9 @@
+version=1
+id=2529746725
 title=Easy Config Chucked
 description=Easy to use custom mod menu used with mods I make.
 description=Original EasyConfig found in Sandbox+ (author: derLoko)
+description=
+description=Tags:B41,Framework
+tags=Build 41;Framework
+visibility=private
