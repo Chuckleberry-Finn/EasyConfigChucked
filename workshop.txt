@@ -6,4 +6,4 @@ description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
 description=Tags:B41,Framework
 tags=Build 41;Framework
-visibility=private
+visibility=public
