@@ -16,28 +16,32 @@ EasyConfig_Chucked.addMod = function(modId, name, config, configMenu, tabName, m
 
 	--link all the things!
 	for gameOptionName,menuEntry in pairs(configMenu) do
-		if menuEntry.options then
-			menuEntry.optionsIndexes = menuEntry.options
-			menuEntry.optionsKeys = {}
-			menuEntry.optionsValues = {}
-			menuEntry.optionLabels = {} -- passed on to UI elements
-			for i,table in ipairs(menuEntry.optionsIndexes) do
-				menuEntry.optionLabels[i] = table[1]
-				local k = table[1]
-				local v = table[2]
-				menuEntry.optionsKeys[k] = {i, v}
-				menuEntry.optionsValues[v] = {i, k}
+		if menuEntry then
+			if menuEntry.options then
+				menuEntry.optionsIndexes = menuEntry.options
+				menuEntry.optionsKeys = {}
+				menuEntry.optionsValues = {}
+				menuEntry.optionLabels = {} -- passed on to UI elements
+				for i,table in ipairs(menuEntry.optionsIndexes) do
+					menuEntry.optionLabels[i] = table[1]
+					local k = table[1]
+					local v = table[2]
+					menuEntry.optionsKeys[k] = {i, v}
+					menuEntry.optionsValues[v] = {i, k}
+				end
 			end
 		end
 	end
 
 	for gameOptionName,value in pairs(config) do
 		local menuEntry = configMenu[gameOptionName]
-		if menuEntry.options then
-			menuEntry.selectedIndex = menuEntry.optionsValues[value][1]
-			menuEntry.selectedLabel = menuEntry.optionsValues[value][2]
+		if menuEntry then
+			if menuEntry.options then
+				menuEntry.selectedIndex = menuEntry.optionsValues[value][1]
+				menuEntry.selectedLabel = menuEntry.optionsValues[value][2]
+			end
+			menuEntry.selectedValue = value
 		end
-		menuEntry.selectedValue = value
 	end
 
 	EasyConfig_Chucked.loadConfig(modId)
