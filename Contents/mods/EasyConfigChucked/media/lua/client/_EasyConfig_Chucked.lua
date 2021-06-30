@@ -282,19 +282,22 @@ EasyConfig_Chucked.saveConfig = function()
 			print("modId: "..modId.." saving")
 			for gameOptionName,_ in pairs(config) do
 				local menuEntry = configMenu[gameOptionName]
-
-				if menuEntry.selectedLabel then
-					local menuEntry_selectedLabel = menuEntry.selectedLabel
-					if type(menuEntry.selectedLabel) == "boolean" then
-						menuEntry_selectedLabel = tostring(menuEntry_selectedLabel)
+				if menuEntry then
+					if menuEntry.selectedLabel then
+						local menuEntry_selectedLabel = menuEntry.selectedLabel
+						if type(menuEntry.selectedLabel) == "boolean" then
+							menuEntry_selectedLabel = tostring(menuEntry_selectedLabel)
+						end
+						fileWriter:write(gameOptionName.."="..menuEntry_selectedLabel..",\r")
+					else
+						local menuEntry_selectedValue = menuEntry.selectedValue
+						if type(menuEntry.selectedValue) == "boolean" then
+							menuEntry_selectedValue = tostring(menuEntry_selectedValue)
+						end
+						fileWriter:write(gameOptionName.."="..menuEntry_selectedValue..",\r")
 					end
-					fileWriter:write(gameOptionName.."="..menuEntry_selectedLabel..",\r")
 				else
-					local menuEntry_selectedValue = menuEntry.selectedValue
-					if type(menuEntry.selectedValue) == "boolean" then
-						menuEntry_selectedValue = tostring(menuEntry_selectedValue)
-					end
-					fileWriter:write(gameOptionName.."="..menuEntry_selectedValue..",\r")
+					print("ERROR: Easy-Config-Chucked: menuEntry=null in saveConfig")
 				end
 			end
 			fileWriter:close()
@@ -315,7 +318,6 @@ EasyConfig_Chucked.loadConfig = function()
 				for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
 					local menuEntry = configMenu[gameOptionName]
 					if menuEntry then
-
 						if menuEntry.options then
 							if menuEntry.optionsKeys[label] then
 								menuEntry.selectedIndex = menuEntry.optionsKeys[label][1]
@@ -328,6 +330,8 @@ EasyConfig_Chucked.loadConfig = function()
 							else menuEntry.selectedValue = tonumber(label) end
 						end
 						config[gameOptionName] = menuEntry.selectedValue
+					else
+						print("ERROR: Easy-Config-Chucked: menuEntry=null in loadConfig")
 					end
 				end
 			end
