@@ -106,7 +106,8 @@ function MainOptions:create() -- override
 
 	--new addText because MainOptions doesn't have it
 	function addText(text, font, r, g, b, a, customX)
-		local label = ISLabel:new(x+(customX or 20),y+self.addY,height, text, r or 1, g or 1, b or 1, a or 1, font, true)
+		self.addY = self.addY +7
+		local label = ISLabel:new(x+(customX or 20),y+self.addY,height, text, r or 1, g or 1, b or 1, a or 1, font or UIFont.Small, true)
 		label:initialise()
 		self.mainPanel:addChild(label)
 		self.addY = self.addY + height +5
@@ -115,7 +116,7 @@ function MainOptions:create() -- override
 
 	--alternative addTickBox because I didn't like the one in MainOptions
 	function addTickBox(text)
-		local label = ISLabel:new(x,y+self.addY,20, text, 1,1,1,1, UIFont.Small, false)
+		local label = ISLabel:new(x,y+self.addY,height, text, 1,1,1,1, UIFont.Small, false)
 		label:initialise()
 		self.mainPanel:addChild(label)
 		local box = ISTickBox:new(x+20,y+self.addY, width,height)
@@ -156,7 +157,7 @@ function MainOptions:create() -- override
 
 			--- TEXT ---
 			if menuEntry.type == "Text" then
-				addText(menuEntry.text, UIFont.Small, menuEntry.r, menuEntry.g, menuEntry.b, menuEntry.a, menuEntry.customX)
+				addText(menuEntry.text, menuEntry.font, menuEntry.r, menuEntry.g, menuEntry.b, menuEntry.a, menuEntry.customX)
 			end
 
 			--- SPACE ---
@@ -220,6 +221,7 @@ function MainOptions:create() -- override
 					menuEntry.selectedValue = menuEntry.optionsIndexes[box.selected][2]
 				end
 				self.gameOptions:add(gameOption)
+				self.addY = self.addY - 8
 			end
 
 			--- SPIN BOX ---
@@ -241,7 +243,7 @@ function MainOptions:create() -- override
 			end
 
 		end
-		self.addY = self.addY + 30
+		self.addY = self.addY + 15
 	end
 
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
