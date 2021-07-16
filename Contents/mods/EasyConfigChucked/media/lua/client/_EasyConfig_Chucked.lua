@@ -84,19 +84,24 @@ function MainOptions:create() -- override
 
 	EasyConfig_MainOptions_create(self) -- call original
 
-	function self.gameOptions:toUI()
+	local EasyConfig_self_gameOptions_toUI = self.gameOptions.toUI
+	function self.gameOptions.toUI(self)
 		for _,option in ipairs(self.options) do
 			if option then option:toUI() end
 		end
 		self.changed = false
+		return EasyConfig_self_gameOptions_toUI(self)
 	end
-	function self.gameOptions:apply()
+
+	local EasyConfig_self_gameOptions_apply = self.gameOptions.apply
+	function self.gameOptions.apply(self)
 		for _,option in ipairs(self.options) do
 			if option then option:apply() end
 		end
 		EasyConfig_Chucked.saveConfig()
 		EasyConfig_Chucked.loadConfig()
 		self.changed = false
+		return EasyConfig_self_gameOptions_apply(self)
 	end
 
 	local x = self:getWidth()/2.5
@@ -128,6 +133,7 @@ function MainOptions:create() -- override
 		self.addY = self.addY + height +5
 		return box
 	end
+
 	--new addNumberBox because MainOptions doesn't have it
 	function addNumberBox(text)
 		local label = ISLabel:new(x,y+self.addY,height, text, 1,1,1,1, UIFont.Small, false)
@@ -143,11 +149,11 @@ function MainOptions:create() -- override
 		self.addY = self.addY + height +5
 		return box
 	end
+
 	--new addSpace
 	function addSpace()
 		self.addY = self.addY + height +5
 	end
-
 
 	function createElements(mod)
 		--addText(mod.name, UIFont.Medium)
@@ -247,7 +253,6 @@ function MainOptions:create() -- override
 	end
 
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
-
 		self.addY = 0
 		self:addPage(mod.tabName)
 
@@ -268,13 +273,13 @@ function MainOptions:create() -- override
 
 		self.addY = self.addY + MainOptions.translatorPane:getHeight() + 22
 		self.mainPanel:setScrollHeight(self.addY + 20)
-
 	end
+
 end
 
 
 
-EasyConfig_Chucked.saveConfig = function()
+function EasyConfig_Chucked.saveConfig()
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		local config = mod.config
 		local configMenu = mod.configMenu
@@ -306,7 +311,8 @@ EasyConfig_Chucked.saveConfig = function()
 		end
 	end
 end
-EasyConfig_Chucked.loadConfig = function()
+
+function EasyConfig_Chucked.loadConfig()
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		local config = EasyConfig_Chucked.mods[modId].config
 		local configMenu = EasyConfig_Chucked.mods[modId].configMenu
