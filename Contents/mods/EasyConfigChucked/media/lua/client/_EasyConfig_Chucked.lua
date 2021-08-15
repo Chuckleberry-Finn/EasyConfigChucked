@@ -2,7 +2,7 @@
 EasyConfig_Chucked = EasyConfig_Chucked or {}
 EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 
-EasyConfig_Chucked.addMod = function(mod)
+function EasyConfig_Chucked.addMod(mod)
 
 	if not mod.config or not mod.menu then
 		return
