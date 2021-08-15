@@ -5,5 +5,5 @@ description=Easy to use custom mod menu used with mods I make.
 description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
 description=Tags:B41,Framework
-tags=Build 41;Framework
+tags=Build 41;Framework;Interface
 visibility=public
