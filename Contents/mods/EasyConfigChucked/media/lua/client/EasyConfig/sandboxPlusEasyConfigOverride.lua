@@ -32,8 +32,14 @@ function sandboxPlusEasyConfigOverride()
 		if not SBP then print("-SBP not found") end
 		if not SP then print("-SP not found") end
 	end
-	EasyConfig.mods = {}
 end
 sandboxPlusEasyConfigOverride()
+
+function scrub_EasyConfig_mods()
+	EasyConfig.mods = {}
+end
+Events.OnGameBoot.Add(scrub_EasyConfig_mods)
+
+
 
 
