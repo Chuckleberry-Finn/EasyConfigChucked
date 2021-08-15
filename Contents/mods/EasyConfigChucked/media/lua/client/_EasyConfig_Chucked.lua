@@ -2,20 +2,16 @@
 EasyConfig_Chucked = EasyConfig_Chucked or {}
 EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 
-EasyConfig_Chucked.addMod = function(modId, name, config, configMenu, tabName, menuSpecificAccess)
-	if not config or not configMenu then
+EasyConfig_Chucked.addMod = function(mod)
+
+	if not mod.config or not mod.menu then
 		return
 	end
 
-	EasyConfig_Chucked.mods[modId] = {}
-	EasyConfig_Chucked.mods[modId].name = name
-	EasyConfig_Chucked.mods[modId].config = config
-	EasyConfig_Chucked.mods[modId].configMenu = configMenu
-	EasyConfig_Chucked.mods[modId].tabName = tabName
-	EasyConfig_Chucked.mods[modId].menuSpecificAccess = menuSpecificAccess
+	EasyConfig_Chucked.mods[mod.modId] = mod
 
 	--link all the things!
-	for gameOptionName,menuEntry in pairs(configMenu) do
+	for gameOptionName,menuEntry in pairs(mod.menu) do
 		if menuEntry then
 			if menuEntry.options then
 				menuEntry.optionsIndexes = menuEntry.options
@@ -33,8 +29,8 @@ EasyConfig_Chucked.addMod = function(modId, name, config, configMenu, tabName, m
 		end
 	end
 
-	for gameOptionName,value in pairs(config) do
-		local menuEntry = configMenu[gameOptionName]
+	for gameOptionName,value in pairs(mod.config) do
+		local menuEntry = mod.menu[gameOptionName]
 		if menuEntry then
 			if menuEntry.options then
 				menuEntry.selectedIndex = menuEntry.optionsValues[value][1]
@@ -44,7 +40,7 @@ EasyConfig_Chucked.addMod = function(modId, name, config, configMenu, tabName, m
 		end
 	end
 
-	EasyConfig_Chucked.loadConfig(modId)
+	EasyConfig_Chucked.loadConfig(mod.modId)
 end
 
 
@@ -159,7 +155,7 @@ function MainOptions:create() -- override
 		--addText(mod.name, UIFont.Medium)
 		--addSpace()
 
-		for gameOptionName,menuEntry in pairs(mod.configMenu) do
+		for gameOptionName,menuEntry in pairs(mod.menu) do
 
 			--- TEXT ---
 			if menuEntry.type == "Text" then
@@ -254,7 +250,7 @@ function MainOptions:create() -- override
 
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		self.addY = 0
-		self:addPage(mod.tabName)
+		self:addPage(string.upper(mod.name))
 
 		if (not mod.menuSpecificAccess) or (getPlayer() and mod.menuSpecificAccess=="ingame") or (not getPlayer() and mod.menuSpecificAccess=="mainmenu") then
 			createElements(mod)
@@ -282,13 +278,13 @@ end
 function EasyConfig_Chucked.saveConfig()
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		local config = mod.config
-		local configMenu = mod.configMenu
+		local menu = mod.menu
 		local configFile = "media/config/"..modId..".config"
 		local fileWriter = getModFileWriter(modId, configFile, true, false)
 		if fileWriter then
 			print("modId: "..modId.." saving")
 			for gameOptionName,_ in pairs(config) do
-				local menuEntry = configMenu[gameOptionName]
+				local menuEntry = menu[gameOptionName]
 				if menuEntry then
 					if menuEntry.selectedLabel then
 						local menuEntry_selectedLabel = menuEntry.selectedLabel
@@ -314,8 +310,8 @@ end
 
 function EasyConfig_Chucked.loadConfig()
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
-		local config = EasyConfig_Chucked.mods[modId].config
-		local configMenu = EasyConfig_Chucked.mods[modId].configMenu
+		local config = mod.config
+		local menu = mod.menu
 		local configFile = "media/config/"..modId..".config"
 		local fileReader = getModFileReader(modId, configFile, false)
 		if fileReader then
@@ -324,7 +320,7 @@ function EasyConfig_Chucked.loadConfig()
 				local line = fileReader:readLine()
 				if not line then break end
 				for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
-					local menuEntry = configMenu[gameOptionName]
+					local menuEntry = menu[gameOptionName]
 					if menuEntry then
 						if menuEntry.options then
 							if menuEntry.optionsKeys[label] then
