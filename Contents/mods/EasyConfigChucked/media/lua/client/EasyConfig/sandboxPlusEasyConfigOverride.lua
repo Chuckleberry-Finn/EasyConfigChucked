@@ -36,7 +36,9 @@ end
 sandboxPlusEasyConfigOverride()
 
 function scrub_EasyConfig_mods()
-	EasyConfig.mods = {}
+	if EasyConfig then
+		EasyConfig.mods = {}
+	end
 end
 Events.OnGameBoot.Add(scrub_EasyConfig_mods)
 
