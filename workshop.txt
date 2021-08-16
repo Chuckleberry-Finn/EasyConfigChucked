@@ -2,6 +2,13 @@ version=1
 id=2529746725
 title=Easy Config Chucked
 description=Easy to use custom mod menu used with mods I make.
+description=
+description=[h1]Current mods using EasyConfig:[/h1]
+description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2458631365]Expanded Helicopter Events[/url][/h2]
+description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2398253681]Conditional Speech[/url][/h2]
+description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2366717227]Swap It[/url][/h2]
+description=
+description=
 description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
 description=Tags:B41,Framework
