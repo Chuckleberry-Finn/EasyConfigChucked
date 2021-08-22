@@ -22,8 +22,14 @@ function sandboxPlusEasyConfigOverride()
 		local newMod = {}
 		newMod.modId = "SandboxPlus"
 		newMod.name = "Sandbox+"
-		newMod.config = SP.config
-		newMod.menu = SP.configMenu
+		newMod.config = {}
+		for k,v in pairs(SP.config) do
+			newMod.config[k] = v
+		end
+		newMod.menu = {}
+		for k,v in pairs(SP.menu) do
+			newMod.menu[k] = v
+		end
 
 		EasyConfig_Chucked = EasyConfig_Chucked or {}
 		EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
@@ -31,12 +37,13 @@ function sandboxPlusEasyConfigOverride()
 	else
 		if not SBP then print("-SBP not found") end
 		if not SP then print("-SP not found") end
-	end
+		end
 end
-sandboxPlusEasyConfigOverride()
+
 
 function scrub_EasyConfig_mods()
 	if EasyConfig then
+		sandboxPlusEasyConfigOverride()
 		EasyConfig.mods = {}
 	end
 end

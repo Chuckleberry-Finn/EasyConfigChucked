@@ -144,6 +144,9 @@ function MainOptions:create() -- override
 	function createElements(mod, invalidAccess)
 		--addText(mod.name, UIFont.Medium)
 		--addSpace()
+		if not mod.menu then
+			return
+		end
 
 		for gameOptionName,menuEntry in pairs(mod.menu) do
 
