@@ -218,7 +218,7 @@ function MainOptions:create() -- override
 							menuEntry.selectedValue = menuEntry.optionsIndexes[box.selected][2]
 						end
 						self.gameOptions:add(gameOption)
-						self.addY = self.addY - 8
+						--self.addY = self.addY - 8
 					end
 
 					--- SPIN BOX ---
