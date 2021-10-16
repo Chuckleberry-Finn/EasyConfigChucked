@@ -68,7 +68,9 @@ EasyConfig_MainOptions_create = MainOptions.create
 
 function MainOptions:create() -- override
 
-	EasyConfig_MainOptions_create(self) -- call original
+	if EasyConfig_MainOptions_create then
+		EasyConfig_MainOptions_create(self) -- call original
+	end
 
 	local EasyConfig_self_gameOptions_toUI = self.gameOptions.toUI
 	function self.gameOptions.toUI(self)
@@ -82,7 +84,9 @@ function MainOptions:create() -- override
 	local EasyConfig_self_gameOptions_apply = self.gameOptions.apply
 	function self.gameOptions.apply(self)
 		for _,option in ipairs(self.options) do
-			if option then option:apply() end
+			if option then
+				option:apply()
+			end
 		end
 		EasyConfig_Chucked.saveConfig()
 		EasyConfig_Chucked.loadConfig()
