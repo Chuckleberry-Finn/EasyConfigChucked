@@ -1,3 +1,4 @@
+require "EasyConfigChucked1_Main"
 
 ---Override sandbox+ easyconfig entirely
 EasyConfig = EasyConfig or nil

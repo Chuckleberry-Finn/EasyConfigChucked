@@ -1,7 +1,8 @@
 require "OptionScreens/MainOptions"
 require "EasyConfig/EasyConfigChucked1_Main"
 
-local GameOption = ISBaseObject:derive("GameOptions")
+local GameOption = ISBaseObject:derive("GameOption")
+
 function GameOption:new(name, control)
 	local o = {}
 	setmetatable(o, self)
