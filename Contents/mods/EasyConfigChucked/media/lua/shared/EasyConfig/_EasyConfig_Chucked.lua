@@ -74,10 +74,8 @@ function MainOptions:create() -- override
 
 	if (getCore():getGameMode() == "Multiplayer") then
 		if (not isAdmin()) and (not isCoopHost()) then
-			print("IS MULTIPLAYER : NOT isAdmin and NOT isCoopHost")
 			return
 		end
-		print("IS MULTIPLAYER : isAdmin=true or isCoopHost=true")
 	end
 
 	local EasyConfig_self_gameOptions_toUI = self.gameOptions.toUI
@@ -323,10 +321,8 @@ function EasyConfig_Chucked.loadConfig()
 
 	if (getCore():getGameMode() == "Multiplayer") then
 		if (not isAdmin()) and (not isCoopHost()) then
-			print("IS MULTIPLAYER : NOT isAdmin and NOT isCoopHost")
 			return
 		end
-		print("IS MULTIPLAYER : isAdmin=true or isCoopHost=true")
 	end
 
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
