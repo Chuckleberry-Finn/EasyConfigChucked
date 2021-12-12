@@ -115,7 +115,7 @@ function EasyConfig_Chucked.loadConfig()
 						end
 						config[gameOptionName] = menuEntry.selectedValue
 					else
-						print("ERROR: Easy-Config-Chucked: menuEntry=null in loadConfig")
+						print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
 					end
 				end
 			end
