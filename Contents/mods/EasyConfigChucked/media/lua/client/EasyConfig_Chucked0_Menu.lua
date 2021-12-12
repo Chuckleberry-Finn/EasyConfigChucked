@@ -1,29 +1,43 @@
+require "ISUI/ISPanelJoypad"
+require "ISUI/ISButton"
+require "ISUI/ISControllerTestPanel"
+require "ISUI/ISVolumeControl"
+
+require "defines"
+
 require "OptionScreens/MainOptions"
-require "EasyConfig/EasyConfigChucked1_Main"
 
 local GameOption = ISBaseObject:derive("GameOption")
 
-function GameOption:new(name, control)
+function GameOption:new(name, control, arg1, arg2)
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
 	o.name = name
 	o.control = control
-
+	o.arg1 = arg1
+	o.arg2 = arg2
 	if control.isCombobox then
-		control.onChange = self.onChange
+		control.onChange = self.onChangeComboBox
 		control.target = o
-	elseif control.isTickBox then
-		control.changeOptionMethod = self.onChange
-		control.changeOptionTarget = o
-	else
-		local go = o.gameOptions
-		control.onTextChange = function()
-			o.gameOptions.changed = true
-		end
 	end
+	if control.isTickBox then
+		control.changeOptionMethod = self.onChangeTickBox
+		control.changeOptionTarget = o
+	end
+	if control.isSlider then
+		control.targetFunc = self.onChangeVolumeControl
+		control.target = o
+	end
+
+	if (not control.isCombobox) and (not control.isTickBox) and (not control.isSlider) then
+		local go = o.gameOptions
+		control.onChange = function() o.gameOptions.changed = true end
+	end
+
 	return o
 end
+
 function GameOption:onChange()
 	self.gameOptions:onChange(self)
 end
@@ -175,43 +189,47 @@ function MainOptions:create() -- override
 					end
 
 					--- COMBO BOX ---
-					if menuEntry.type == "Combobox" then
-						--addCombo(x,y,w,h, name,options, selected, target, onchange)
-						local box = self:addCombo(x,y,200,20, menuEntry.title, menuEntry.optionLabels)
-						if menuEntry.tooltip then
-							box:setToolTipMap({defaultTooltip = menuEntry.tooltip})
+					if menuEntry.type == "Combobox" and menuEntry.title and menuEntry.optionLabels then
+						if (type(menuEntry.optionLabels) == "table") and #menuEntry.optionLabels>0 then
+							--addCombo(x,y,w,h, name,options, selected, target, onchange)
+							local box = self:addCombo(x,y,200,20, menuEntry.title, menuEntry.optionLabels)
+							if menuEntry.tooltip then
+								box:setToolTipMap({defaultTooltip = menuEntry.tooltip})
+							end
+							local gameOption = GameOption:new(gameOptionName, box)
+							function gameOption.toUI(self)
+								local box = self.control
+								box.selected = menuEntry.selectedIndex
+							end
+							function gameOption.apply(self)
+								local box = self.control
+								menuEntry.selectedIndex = box.selected
+								menuEntry.selectedLabel = menuEntry.optionsIndexes[box.selected][1]
+								menuEntry.selectedValue = menuEntry.optionsIndexes[box.selected][2]
+							end
+							self.gameOptions:add(gameOption)
+							--self.addY = self.addY - 8
 						end
-						local gameOption = GameOption:new(gameOptionName, box)
-						function gameOption.toUI(self)
-							local box = self.control
-							box.selected = menuEntry.selectedIndex
-						end
-						function gameOption.apply(self)
-							local box = self.control
-							menuEntry.selectedIndex = box.selected
-							menuEntry.selectedLabel = menuEntry.optionsIndexes[box.selected][1]
-							menuEntry.selectedValue = menuEntry.optionsIndexes[box.selected][2]
-						end
-						self.gameOptions:add(gameOption)
-						--self.addY = self.addY - 8
 					end
 
 					--- SPIN BOX ---
-					if menuEntry.type == "Spinbox" then
-						--addSpinBox(x,y,w,h, name, options, selected, target, onchange)
-						local box = self:addSpinBox(x,y,200,20, menuEntry.title, menuEntry.optionLabels)
-						local gameOption = GameOption:new(gameOptionName, box)
-						function gameOption.toUI(self)
-							local box = self.control
-							box.selected = menuEntry.selectedIndex
+					if menuEntry.type == "Spinbox" and menuEntry.title and menuEntry.optionLabels then
+						if (type(menuEntry.optionLabels) == "table") and #menuEntry.optionLabels>0 then
+							--addSpinBox(x,y,w,h, name, options, selected, target, onchange)
+							local box = self:addSpinBox(x,y,200,20, menuEntry.title, menuEntry.optionLabels)
+							local gameOption = GameOption:new(gameOptionName, box)
+							function gameOption.toUI(self)
+								local box = self.control
+								box.selected = menuEntry.selectedIndex
+							end
+							function gameOption.apply(self)
+								local box = self.control
+								menuEntry.selectedIndex = box.selected
+								menuEntry.selectedLabel = menuEntry.optionsIndexes[box.selected][1]
+								menuEntry.selectedValue = menuEntry.optionsIndexes[box.selected][2]
+							end
+							self.gameOptions:add(gameOption)
 						end
-						function gameOption.apply(self)
-							local box = self.control
-							menuEntry.selectedIndex = box.selected
-							menuEntry.selectedLabel = menuEntry.optionsIndexes[box.selected][1]
-							menuEntry.selectedValue = menuEntry.optionsIndexes[box.selected][2]
-						end
-						self.gameOptions:add(gameOption)
 					end
 				end
 			end
