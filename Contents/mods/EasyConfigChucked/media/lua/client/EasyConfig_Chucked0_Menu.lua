@@ -51,7 +51,7 @@ function MainOptions:create() -- override
 		EasyConfig_MainOptions_create(self) -- call original
 	end
 
-	if (getCore():getGameMode() == "Multiplayer") then
+	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
 			return
 		end

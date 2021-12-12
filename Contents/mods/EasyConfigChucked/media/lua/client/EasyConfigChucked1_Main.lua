@@ -37,6 +37,13 @@ end
 
 
 function EasyConfig_Chucked.saveConfig()
+
+	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
+		if (not isAdmin()) and (not isCoopHost()) then
+			return
+		end
+	end
+
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		local config = mod.config
 		local menu = mod.menu
@@ -71,7 +78,7 @@ end
 
 function EasyConfig_Chucked.loadConfig()
 
-	if (getCore():getGameMode() == "Multiplayer") then
+	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
 			return
 		end
