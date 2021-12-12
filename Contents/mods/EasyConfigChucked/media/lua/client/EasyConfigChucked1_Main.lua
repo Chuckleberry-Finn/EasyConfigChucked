@@ -50,7 +50,7 @@ function EasyConfig_Chucked.saveConfig()
 		local configFile = "media/config/"..modId..".config"
 		local fileWriter = getModFileWriter(modId, configFile, true, false)
 		if fileWriter then
-			print("modId: "..modId.." saving")
+			print("Easy-Config-Chucked:: modId: "..modId.." saving")
 			for gameOptionName,_ in pairs(config) do
 				local menuEntry = menu[gameOptionName]
 				if menuEntry then
@@ -60,15 +60,17 @@ function EasyConfig_Chucked.saveConfig()
 							menuEntry_selectedLabel = tostring(menuEntry_selectedLabel)
 						end
 						fileWriter:write(gameOptionName.."="..menuEntry_selectedLabel..",\r")
-					else
+					elseif menuEntry.selectedValue then
 						local menuEntry_selectedValue = menuEntry.selectedValue
 						if type(menuEntry.selectedValue) == "boolean" then
 							menuEntry_selectedValue = tostring(menuEntry_selectedValue)
 						end
 						fileWriter:write(gameOptionName.."="..menuEntry_selectedValue..",\r")
+					else
+						print("ERROR: Easy-Config-Chucked: "..gameOptionName..": selectedLabel and selectedValue = null (saveConfig)")
 					end
 				else
-					print("ERROR: Easy-Config-Chucked: menuEntry=null in saveConfig")
+					print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry=null (saveConfig)")
 				end
 			end
 			fileWriter:close()
