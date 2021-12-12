@@ -53,6 +53,7 @@ function MainOptions:create() -- override
 
 	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
+			print("MP GameMode Detected: Note Host/Admin: MainOptions Hidden")
 			return
 		end
 	end
