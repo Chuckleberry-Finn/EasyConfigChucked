@@ -2,12 +2,12 @@ require "ISUI/ISPanelJoypad"
 require "ISUI/ISButton"
 require "ISUI/ISControllerTestPanel"
 require "ISUI/ISVolumeControl"
-
 require "defines"
-
 require "OptionScreens/MainOptions"
 
 local GameOption = ISBaseObject:derive("GameOption")
+
+Events.OnMainMenuEnter.Add(getWorld():setGameMode("Sandbox"))
 
 function GameOption:new(name, control, arg1, arg2)
 	local o = {}
