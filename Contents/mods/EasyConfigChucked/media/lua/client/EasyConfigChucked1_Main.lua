@@ -40,7 +40,7 @@ function EasyConfig_Chucked.saveConfig()
 
 	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
-			print("MP GameMode Detected: Note Host/Admin: Saving Prevented")
+			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: Saving Prevented")
 			return
 		end
 	end
@@ -51,7 +51,7 @@ function EasyConfig_Chucked.saveConfig()
 		local configFile = "media/config/"..modId..".config"
 		local fileWriter = getModFileWriter(modId, configFile, true, false)
 		if fileWriter then
-			print("Easy-Config-Chucked:: modId: "..modId.." saving")
+			print("Easy-Config-Chucked: modId: "..modId.." saving")
 			for gameOptionName,_ in pairs(config) do
 				local menuEntry = menu[gameOptionName]
 				if menuEntry then
