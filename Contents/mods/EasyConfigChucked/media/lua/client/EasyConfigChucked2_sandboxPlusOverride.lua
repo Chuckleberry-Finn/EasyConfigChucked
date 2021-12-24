@@ -48,7 +48,9 @@ function scrub_EasyConfig_mods()
 		EasyConfig.mods = {}
 	end
 end
-Events.OnGameBoot.Add(scrub_EasyConfig_mods)
+
+--Events.OnGameBoot.Add(scrub_EasyConfig_mods)
+Events.OnMainMenuEnter.Add(scrub_EasyConfig_mods)
 
 
 

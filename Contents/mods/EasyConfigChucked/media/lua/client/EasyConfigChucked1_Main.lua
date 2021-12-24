@@ -81,11 +81,12 @@ end
 
 function EasyConfig_Chucked.loadConfig()
 
-	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
+	--[[if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
 			return
 		end
 	end
+	--]]
 
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 
@@ -125,4 +126,5 @@ function EasyConfig_Chucked.loadConfig()
 	end
 end
 
-Events.OnGameBoot.Add(EasyConfig_Chucked.loadConfig)
+--Events.OnGameBoot.Add(EasyConfig_Chucked.loadConfig)
+Events.OnMainMenuEnter.Add(EasyConfig_Chucked.loadConfig)

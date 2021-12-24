@@ -18,15 +18,15 @@ function GameOption:new(name, control, arg1, arg2)
 	o.arg1 = arg1
 	o.arg2 = arg2
 	if control.isCombobox then
-		control.onChange = self.onChangeComboBox
+		control.onChange = self.onChange
 		control.target = o
 	end
 	if control.isTickBox then
-		control.changeOptionMethod = self.onChangeTickBox
+		control.changeOptionMethod = self.onChange
 		control.changeOptionTarget = o
 	end
 	if control.isSlider then
-		control.targetFunc = self.onChangeVolumeControl
+		control.targetFunc = self.onChange
 		control.target = o
 	end
 
