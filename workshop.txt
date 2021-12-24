@@ -12,5 +12,5 @@ description=
 description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
 description=Tags:B41,Framework
-tags=Build 41;Framework;Interface
+tags=Build 41;Framework;Interface;Misc;Multiplayer
 visibility=public
