@@ -8,6 +8,9 @@ description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2458
 description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2398253681]Conditional Speech[/url][/h2]
 description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2366717227]Swap It[/url][/h2]
 description=
+description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
+description=
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck[/b][/url]
 description=
 description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
