@@ -3,6 +3,14 @@ id=2529746725
 title=Easy Config Chucked
 description=Easy to use custom mod menu used with mods I make.
 description=
+description=[h1]If you're having an issue or encountering errors:[/h1]
+description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
+description=(This will force a download of the latest version.)
+description=[b]If the problem persists, please supply a error log, which can be found here:[/b]
+description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
+description=Uploaded to any online text viewer, [url=https://pastebin.com/]pastebin[/url] is recomended.
+description=Share the link in a comment below.
+description=
 description=[h1]Current mods using EasyConfig:[/h1]
 description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2458631365]Expanded Helicopter Events[/url][/h2]
 description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2398253681]Conditional Speech[/url][/h2]
