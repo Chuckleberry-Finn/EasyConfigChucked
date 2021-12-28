@@ -7,7 +7,12 @@ require "OptionScreens/MainOptions"
 
 local GameOption = ISBaseObject:derive("GameOption")
 
-Events.OnMainMenuEnter.Add(getWorld():setGameMode("Sandbox"))
+function resetGameMode()
+	if getCore():getGameMode() == "Multiplayer" then
+		getWorld():setGameMode("Sandbox")
+	end
+end
+Events.OnMainMenuEnter.Add(resetGameMode)
 
 function GameOption:new(name, control, arg1, arg2)
 	local o = {}
