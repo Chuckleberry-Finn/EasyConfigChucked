@@ -38,7 +38,7 @@ end
 
 function EasyConfig_Chucked.saveConfig()
 
-	if (getCore():getGameMode() == "Multiplayer") and isIngameState() then
+	if (getCore():getGameMode() == "Multiplayer") then--and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
 			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: Saving Prevented")
 			return
