@@ -7,15 +7,6 @@ require "OptionScreens/MainOptions"
 
 local GameOption = ISBaseObject:derive("GameOption")
 
-function resetGameMode()
-	local printText = "EasyConfig: OnMainMenuEnter: "..getCore():getGameMode()
-	if getCore():getGameMode() == "Multiplayer" then
-		printText = printText.." -MP Found; Set to Sandbox"
-		getWorld():setGameMode("Sandbox")
-	end
-	print(printText)
-end
-Events.OnMainMenuEnter.Add(resetGameMode)
 
 function GameOption:new(name, control, arg1, arg2)
 	local o = {}
@@ -59,7 +50,7 @@ function MainOptions:create() -- override
 		EasyConfig_MainOptions_create(self) -- call original
 	end
 
-	if (getCore():getGameMode() == "Multiplayer") then --and isIngameState() then
+	if isClient() then --and isIngameState() then
 		if (not isAdmin()) and (not isCoopHost()) then
 			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: MainOptions Hidden")
 			return
