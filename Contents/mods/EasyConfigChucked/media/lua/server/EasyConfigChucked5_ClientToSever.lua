@@ -3,9 +3,9 @@ local function onCommand(_module, _command, _dataA, _dataB)
 	--serverside
 	if _module=="ConfigFile" then
 		if _command=="Load" then
-			EasyConfig_Chucked.loadConfig()
+			EasyConfig_Chucked.loadConfig(_dataB.online)
 		elseif _command == "Save" then
-			EasyConfig_Chucked.saveConfig()
+			EasyConfig_Chucked.saveConfig(_dataB.online)
 		end
 	end
 end

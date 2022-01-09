@@ -39,7 +39,7 @@ function EasyConfig_Chucked.prepModForLoad(mod)
 end
 
 
-function EasyConfig_Chucked.saveConfig()
+function EasyConfig_Chucked.saveConfig(online)
 
 	if isClient() then
 		if (not isAdmin()) and (not isCoopHost()) then
@@ -47,7 +47,7 @@ function EasyConfig_Chucked.saveConfig()
 			return
 		else
 			print("Easy-Config-Chucked: modId: loading passed onto server")
-			sendClientCommand("ConfigFile", "Save", {})
+			sendClientCommand("ConfigFile", "Save", {online=true})
 		end
 	end
 
@@ -55,7 +55,14 @@ function EasyConfig_Chucked.saveConfig()
 		local config = mod.config
 		local menu = mod.menu
 		local configFile = "config/"..modId..".config"
+
+		--getSaveDirSub /savedir
+		--getSaveDirectory()
+
+		--getAbsoluteSaveFolderName
+
 		local fileWriter = getModFileWriter(modId, configFile, true, false)
+
 		if fileWriter then
 			print("Easy-Config-Chucked: modId: "..modId.." saving")
 			for gameOptionName,_ in pairs(config) do
@@ -85,11 +92,11 @@ function EasyConfig_Chucked.saveConfig()
 	end
 end
 
-function EasyConfig_Chucked.loadConfig()
+function EasyConfig_Chucked.loadConfig(online)
 
 	if isClient() then
 		print("Easy-Config-Chucked: modId: loading passed onto server")
-		sendClientCommand("ConfigFile", "Load", {})
+		sendClientCommand("ConfigFile", "Load", {online=true})
 	else
 		for modId,mod in pairs(EasyConfig_Chucked.mods) do
 
