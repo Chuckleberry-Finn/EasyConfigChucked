@@ -39,18 +39,8 @@ function EasyConfig_Chucked.prepModForLoad(mod)
 end
 
 
-function EasyConfig_Chucked.saveConfig(online)
-
-	if isClient() then
-		if (not isAdmin()) and (not isCoopHost()) then
-			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: Saving Prevented")
-			return
-		else
-			print("Easy-Config-Chucked: modId: loading passed onto server")
-			sendClientCommand("ConfigFile", "Save", {online=true})
-		end
-	end
-
+function EasyConfig_Chucked.saveConfig(settingsReceived)
+	local settingsToSend = {}
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		local config = mod.config
 		local menu = mod.menu
@@ -58,59 +48,108 @@ function EasyConfig_Chucked.saveConfig(online)
 
 		--getSaveDirSub /savedir
 		--getSaveDirectory()
-
 		--getAbsoluteSaveFolderName
 
-		local fileWriter = getModFileWriter(modId, configFile, true, false)
+		settingsToSend[modId] = {}
 
-		if fileWriter then
-			print("Easy-Config-Chucked: modId: "..modId.." saving")
-			for gameOptionName,_ in pairs(config) do
-				local menuEntry = menu[gameOptionName]
-				if menuEntry then
-					if menuEntry.selectedLabel then
-						local menuEntry_selectedLabel = menuEntry.selectedLabel
-						if type(menuEntry.selectedLabel) == "boolean" then
-							menuEntry_selectedLabel = tostring(menuEntry_selectedLabel)
-						end
-						fileWriter:write(gameOptionName.."="..menuEntry_selectedLabel..",\r")
-					elseif menuEntry.selectedValue then
-						local menuEntry_selectedValue = menuEntry.selectedValue
-						if type(menuEntry.selectedValue) == "boolean" then
-							menuEntry_selectedValue = tostring(menuEntry_selectedValue)
-						end
-						fileWriter:write(gameOptionName.."="..menuEntry_selectedValue..",\r")
-					else
-						print("ERROR: Easy-Config-Chucked: "..gameOptionName..": selectedLabel and selectedValue = null (saveConfig)")
-					end
-				else
-					print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry=null (saveConfig)")
-				end
+		if not isClient() then
+			if settingsReceived then
+				config = settingsReceived.config
+				menu = settingsReceived.menu
 			end
-			fileWriter:close()
+
+			local fileWriter = getModFileWriter(modId, configFile, true, false)
+			if fileWriter then
+				print("Easy-Config-Chucked: modId: "..modId.." saving")
+				for gameOptionName,_ in pairs(config) do
+					local menuEntry = menu[gameOptionName]
+					if menuEntry then
+						if menuEntry.selectedLabel then
+							local menuEntry_selectedLabel = menuEntry.selectedLabel
+							if type(menuEntry.selectedLabel) == "boolean" then
+								menuEntry_selectedLabel = tostring(menuEntry_selectedLabel)
+							end
+							if menuEntry_selectedLabel then
+								fileWriter:write(gameOptionName.."="..menuEntry_selectedLabel..",\r")
+							else
+								print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry_selectedLabel=null (saveConfig) aborted.")
+							end
+						elseif menuEntry.selectedValue then
+							local menuEntry_selectedValue = menuEntry.selectedValue
+							if type(menuEntry.selectedValue) == "boolean" then
+								menuEntry_selectedValue = tostring(menuEntry_selectedValue)
+							end
+							if menuEntry_selectedValue then
+								fileWriter:write(gameOptionName.."="..menuEntry_selectedValue..",\r")
+							else
+								print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry_selectedValue=null (saveConfig) aborted.")
+							end
+						else
+							print("WARN: Easy-Config-Chucked: "..gameOptionName..": selectedLabel and selectedValue = null (saveConfig)")
+						end
+					else
+						print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry=null (saveConfig)")
+					end
+				end
+				fileWriter:close()
+			else
+				print("ERROR: Easy-Config-Chucked: fileReader not found in saving")
+			end
+		else
+			print("Easy-Config-Chucked: settings ready to pass onto server")
+			settingsToSend[modId].config = config
+			settingsToSend[modId].menu = menu
+		end
+	end
+
+	if settingsToSend and isClient() then
+		if isAdmin() or isCoopHost() then
+			print("Easy-Config-Chucked: settings passed onto server")
+			sendClientCommand("ConfigFile", "Save", {settingsToSend=settingsToSend})
+		else
+			print("Easy-Config-Chucked: MP GameMode Detected: Not Host/Admin: Saving Prevented")
+			return
 		end
 	end
 end
 
-function EasyConfig_Chucked.loadConfig(online)
+--[[
+local world = getWorld()
+    local relPath = world:getGameMode() .. getFileSeparator() .. world:getWorld()
+    local savePath = getAbsoluteSaveFolderName(relPath)
+--]]
 
-	if isClient() then
-		print("Easy-Config-Chucked: modId: loading passed onto server")
-		sendClientCommand("ConfigFile", "Load", {online=true})
+function EasyConfig_Chucked.loadConfig(override, settingsSent)
+	if not override and isClient() then
+		print("Easy-Config-Chucked: loading request passed onto server: A")
+		sendClientCommand("ConfigFile", "Load", {fluff=true})
 	else
+		local settingsToSend = {}
+		print("Easy-Config-Chucked: Loaded settings: D")
 		for modId,mod in pairs(EasyConfig_Chucked.mods) do
-
 			EasyConfig_Chucked.prepModForLoad(mod)
-
 			local config = mod.config
 			local menu = mod.menu
+
+			if settingsSent then
+				print(" - Easy-Config-Chucked: settingsSent")
+				config = settingsSent.config
+				menu = settingsSent.menu
+			end
+
+			if not config then
+				break
+			end
+
 			local configFile = "config/"..modId..".config"
 			local fileReader = getModFileReader(modId, configFile, false)
 			if fileReader then
 				print("Easy-Config-Chucked: modId: "..modId.." loading")
 				for _,_ in pairs(config) do
 					local line = fileReader:readLine()
-					if not line then break end
+					if not line then
+						break
+					end
 					for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
 						local menuEntry = menu[gameOptionName]
 						if menuEntry then
@@ -132,7 +171,11 @@ function EasyConfig_Chucked.loadConfig(online)
 					end
 				end
 				fileReader:close()
+			else
+				print("ERROR: Easy-Config-Chucked: fileReader not found in loading (override:"..tostring(override)..")")
 			end
+			settingsToSend[modId] = {config,menu}
 		end
+		return settingsToSend
 	end
 end

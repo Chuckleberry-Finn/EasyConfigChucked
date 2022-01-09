@@ -49,13 +49,6 @@ function MainOptions:create() -- override
 		EasyConfig_MainOptions_create(self) -- call original
 	end
 
-	if isServer() then
-		if (not isAdmin()) and (not isCoopHost()) then
-			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: MainOptions Hidden")
-			return
-		end
-	end
-
 	local EasyConfig_self_gameOptions_toUI = self.gameOptions.toUI
 	function self.gameOptions.toUI(self)
 		for _,option in ipairs(self.options) do
@@ -243,15 +236,22 @@ function MainOptions:create() -- override
 
 		local invalidAccess = false
 
+		if isClient() then
+			if not (isAdmin() or isCoopHost()) then
+				invalidAccess = true
+				addText("This mod's options can only be accessed by an admin or the host.", UIFont.Medium, 1, 1, 1, 1, -125)
+			end
+		end
+
 		if (not mod.menuSpecificAccess) or (getPlayer() and mod.menuSpecificAccess=="ingame") or (not getPlayer() and mod.menuSpecificAccess=="mainmenu") then
 		else
 			invalidAccess = true
 			if (not getPlayer() and mod.menuSpecificAccess=="ingame") then
-				addText("This mod's options can only be accessed from the in-game options menu.", UIFont.Medium, 1, 1, 1, 1, -100)
+				addText("This mod's options can only be accessed from the in-game options menu.", UIFont.Medium, 1, 1, 1, 1, -125)
 			end
 			if (getPlayer() and mod.menuSpecificAccess=="mainmenu") then
-				addText("This mod has options that can only be accessed from the main-menu options.", UIFont.Medium, 1, 1, 1, 1, -100)
-				addText("Note: Make sure to enable this mod from the main-menu to view the options.", UIFont.Small, 1, 1, 1, 1, -100)
+				addText("This mod has options that can only be accessed from the main-menu options.", UIFont.Medium, 1, 1, 1, 1, -125)
+				addText("Note: Make sure to enable this mod from the main-menu to view the options.", UIFont.Small, 1, 1, 1, 1, -125)
 			end
 			addText(" ", UIFont.Medium)
 		end
@@ -264,5 +264,7 @@ function MainOptions:create() -- override
 
 end
 
-Events.OnMainMenuEnter.Add(EasyConfig_Chucked.loadConfig)
+Events.OnGameBoot.Add(EasyConfig_Chucked.loadConfig)
 Events.OnServerStarted.Add(EasyConfig_Chucked.loadConfig)
+Events.OnCreatePlayer.Add(EasyConfig_Chucked.loadConfig)
+
