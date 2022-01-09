@@ -1,4 +1,7 @@
+Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MP"))
 ---Original EasyConfig found in Sandbox+ (author: derLoko)
+
+
 EasyConfig_Chucked = EasyConfig_Chucked or {}
 EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 
@@ -42,13 +45,16 @@ function EasyConfig_Chucked.saveConfig()
 		if (not isAdmin()) and (not isCoopHost()) then
 			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: Saving Prevented")
 			return
+		else
+			print("Easy-Config-Chucked: modId: loading passed onto server")
+			sendClientCommand("ConfigFile", "Save", {})
 		end
 	end
 
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 		local config = mod.config
 		local menu = mod.menu
-		local configFile = "media/config/"..modId..".config"
+		local configFile = "config/"..modId..".config"
 		local fileWriter = getModFileWriter(modId, configFile, true, false)
 		if fileWriter then
 			print("Easy-Config-Chucked: modId: "..modId.." saving")
@@ -81,43 +87,45 @@ end
 
 function EasyConfig_Chucked.loadConfig()
 
-	for modId,mod in pairs(EasyConfig_Chucked.mods) do
+	if isClient() then
+		print("Easy-Config-Chucked: modId: loading passed onto server")
+		sendClientCommand("ConfigFile", "Load", {})
+	else
+		for modId,mod in pairs(EasyConfig_Chucked.mods) do
 
-		EasyConfig_Chucked.prepModForLoad(mod)
+			EasyConfig_Chucked.prepModForLoad(mod)
 
-		local config = mod.config
-		local menu = mod.menu
-		local configFile = "media/config/"..modId..".config"
-		local fileReader = getModFileReader(modId, configFile, false)
-		if fileReader then
-			print("modId: "..modId.." loading")
-			for _,_ in pairs(config) do
-				local line = fileReader:readLine()
-				if not line then break end
-				for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
-					local menuEntry = menu[gameOptionName]
-					if menuEntry then
-						if menuEntry.options then
-							if menuEntry.optionsKeys[label] then
-								menuEntry.selectedIndex = menuEntry.optionsKeys[label][1]
-								menuEntry.selectedValue = menuEntry.optionsKeys[label][2]
-								menuEntry.selectedLabel = label
+			local config = mod.config
+			local menu = mod.menu
+			local configFile = "config/"..modId..".config"
+			local fileReader = getModFileReader(modId, configFile, false)
+			if fileReader then
+				print("Easy-Config-Chucked: modId: "..modId.." loading")
+				for _,_ in pairs(config) do
+					local line = fileReader:readLine()
+					if not line then break end
+					for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
+						local menuEntry = menu[gameOptionName]
+						if menuEntry then
+							if menuEntry.options then
+								if menuEntry.optionsKeys[label] then
+									menuEntry.selectedIndex = menuEntry.optionsKeys[label][1]
+									menuEntry.selectedValue = menuEntry.optionsKeys[label][2]
+									menuEntry.selectedLabel = label
+								end
+							else
+								if label == "true" then menuEntry.selectedValue = true
+								elseif label == "false" then menuEntry.selectedValue = false
+								else menuEntry.selectedValue = tonumber(label) end
 							end
+							config[gameOptionName] = menuEntry.selectedValue
 						else
-							if label == "true" then menuEntry.selectedValue = true
-							elseif label == "false" then menuEntry.selectedValue = false
-							else menuEntry.selectedValue = tonumber(label) end
+							print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
 						end
-						config[gameOptionName] = menuEntry.selectedValue
-					else
-						print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
 					end
 				end
+				fileReader:close()
 			end
-			fileReader:close()
 		end
 	end
 end
-
---Events.OnGameBoot.Add(EasyConfig_Chucked.loadConfig)
-Events.OnMainMenuEnter.Add(EasyConfig_Chucked.loadConfig)

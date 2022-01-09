@@ -42,15 +42,14 @@ function GameOption:onChange()
 end
 
 
-EasyConfig_MainOptions_create = MainOptions.create
-
+local EasyConfig_MainOptions_create = MainOptions.create
 function MainOptions:create() -- override
 
 	if EasyConfig_MainOptions_create then
 		EasyConfig_MainOptions_create(self) -- call original
 	end
 
-	if isClient() then --and isIngameState() then
+	if isServer() then
 		if (not isAdmin()) and (not isCoopHost()) then
 			print("Easy-Config-Chucked: MP GameMode Detected: Note Host/Admin: MainOptions Hidden")
 			return
@@ -264,3 +263,6 @@ function MainOptions:create() -- override
 	end
 
 end
+
+Events.OnMainMenuEnter.Add(EasyConfig_Chucked.loadConfig)
+Events.OnServerStarted.Add(EasyConfig_Chucked.loadConfig)
