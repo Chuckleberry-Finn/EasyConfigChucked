@@ -1,12 +1,10 @@
 Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MP"))
 ---Original EasyConfig found in Sandbox+ (author: derLoko)
 
-
 EasyConfig_Chucked = EasyConfig_Chucked or {}
 EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 
 function EasyConfig_Chucked.prepModForLoad(mod)
-
 	--link all the things!
 	for gameOptionName,menuEntry in pairs(mod.menu) do
 		if menuEntry then
@@ -39,28 +37,64 @@ function EasyConfig_Chucked.prepModForLoad(mod)
 end
 
 
+function EasyConfig_Chucked.getConfigProcessor(modId, command, server)
+	if not modId or not command then
+		return
+	end
+
+	local configSavePath = "config"..getFileSeparator()..modId..".config"
+	local world = getWorld()
+
+	if server then
+		local relPath = "EasyConfigChuckedServerConfigs"..getFileSeparator()..world:getWorld().."_"..configSavePath
+		print("ECC-FILESYSTEM: expected-MP:"..world:getGameMode().." "..command.." absPath: "..relPath)
+		if command == "write" then
+			return getFileWriter(relPath, true, false)
+		elseif command == "read" then
+			return getFileReader(relPath, false)
+		end
+	else
+		print("ECC-FILESYSTEM: expected-SP:"..world:getGameMode().." "..command.." absPath: "..configSavePath)
+		if command == "write" then
+			return getModFileWriter(modId, configSavePath, true, false)
+		elseif command == "read" then
+			return getModFileReader(modId, configSavePath, false)
+		end
+	end
+end
+
+
 function EasyConfig_Chucked.saveConfig(settingsReceived)
-	local settingsToSend = {}
-	for modId,mod in pairs(EasyConfig_Chucked.mods) do
-		local config = mod.config
-		local menu = mod.menu
-		local configFile = "config/"..modId..".config"
 
-		--getSaveDirSub /savedir
-		--getSaveDirectory()
-		--getAbsoluteSaveFolderName
-
-		settingsToSend[modId] = {}
-
-		if not isClient() then
-			if settingsReceived then
-				config = settingsReceived.config
-				menu = settingsReceived.menu
+	if not settingsReceived and isClient() then
+		if isAdmin() or isCoopHost() then
+			print("Easy-Config-Chucked: settings to *save* passed onto server")
+			local settings = EasyConfig_Chucked.loadConfig(nil,true)
+			if not settings then
+				print("Easy-Config-Chucked: ERR: No Clientside Settings Loaded.")
+				return
 			end
+			sendClientCommand("ConfigFile", "Save", settings)
+		else
+			print("Easy-Config-Chucked: MP GameMode Detected: Not Host/Admin: Saving Prevented")
+			return
+		end
+	else
 
-			local fileWriter = getModFileWriter(modId, configFile, true, false)
+		local settings = settingsReceived or EasyConfig_Chucked.mods
+
+		if not settings or type(settings)~="table" then
+			print("Easy-Config-Chucked: ERR: SAVE: No settings received.  settings:"..tostring(settings))
+			return
+		end
+
+		for modId,mod in pairs(settings) do
+			local config = mod.config
+			local menu = mod.menu
+
+			local fileWriter = EasyConfig_Chucked.getConfigProcessor(modId, "write", (not not settingsReceived))
 			if fileWriter then
-				print("Easy-Config-Chucked: modId: "..modId.." saving")
+				print("Easy-Config-Chucked: saving: modId:"..modId)
 				for gameOptionName,_ in pairs(config) do
 					local menuEntry = menu[gameOptionName]
 					if menuEntry then
@@ -95,20 +129,6 @@ function EasyConfig_Chucked.saveConfig(settingsReceived)
 			else
 				print("ERROR: Easy-Config-Chucked: fileReader not found in saving")
 			end
-		else
-			print("Easy-Config-Chucked: settings ready to pass onto server")
-			settingsToSend[modId].config = config
-			settingsToSend[modId].menu = menu
-		end
-	end
-
-	if settingsToSend and isClient() then
-		if isAdmin() or isCoopHost() then
-			print("Easy-Config-Chucked: settings passed onto server")
-			sendClientCommand("ConfigFile", "Save", {settingsToSend=settingsToSend})
-		else
-			print("Easy-Config-Chucked: MP GameMode Detected: Not Host/Admin: Saving Prevented")
-			return
 		end
 	end
 end
@@ -119,32 +139,38 @@ local world = getWorld()
     local savePath = getAbsoluteSaveFolderName(relPath)
 --]]
 
-function EasyConfig_Chucked.loadConfig(override, settingsSent)
+function EasyConfig_Chucked.loadConfig(sentSettings, override)
 	if not override and isClient() then
-		print("Easy-Config-Chucked: loading request passed onto server: A")
-		sendClientCommand("ConfigFile", "Load", {fluff=true})
+		print("Easy-Config-Chucked: loading request passed onto server  (A)")
+		sendClientCommand("ConfigFile", "Load", {fluff="fluff"})
 	else
-		local settingsToSend = {}
-		print("Easy-Config-Chucked: Loaded settings: D")
-		for modId,mod in pairs(EasyConfig_Chucked.mods) do
+
+		local settings = sentSettings or EasyConfig_Chucked.mods
+
+		if not settings or type(settings)~="table" then
+			print("Easy-Config-Chucked: ERR: LOAD: No settings Loaded.  settings:"..tostring(settings))
+			return
+		end
+
+		local returnSettings
+
+		if override then
+			print("Easy-Config-Chucked: Loaded settings from server  (D)")
+		end
+
+		for modId,mod in pairs(settings) do
 			EasyConfig_Chucked.prepModForLoad(mod)
 			local config = mod.config
 			local menu = mod.menu
 
-			if settingsSent then
-				print(" - Easy-Config-Chucked: settingsSent")
-				config = settingsSent.config
-				menu = settingsSent.menu
-			end
-
-			if not config then
+			if not config or not menu then
+				print("ERROR: Easy-Config-Chucked: config=null or menu=null "..modId.." (loadConfig)")
 				break
 			end
 
-			local configFile = "config/"..modId..".config"
-			local fileReader = getModFileReader(modId, configFile, false)
+			local fileReader = EasyConfig_Chucked.getConfigProcessor(modId, "read", (not not sentSettings))
 			if fileReader then
-				print("Easy-Config-Chucked: modId: "..modId.." loading")
+				print("Easy-Config-Chucked: loading: modId: "..modId)
 				for _,_ in pairs(config) do
 					local line = fileReader:readLine()
 					if not line then
@@ -172,10 +198,18 @@ function EasyConfig_Chucked.loadConfig(override, settingsSent)
 				end
 				fileReader:close()
 			else
-				print("ERROR: Easy-Config-Chucked: fileReader not found in loading (override:"..tostring(override)..")")
+				print("ERROR: Easy-Config-Chucked: fileReader not found in loading")
 			end
-			settingsToSend[modId] = {config,menu}
+			returnSettings = returnSettings or {}
+			returnSettings[modId] = {menu=menu,config=config}
 		end
-		return settingsToSend
+		return returnSettings
 	end
 end
+
+
+function loadConfig_A() print("ECC: OnServerStarted") EasyConfig_Chucked.loadConfig() end
+function loadConfig_B() print("ECC: OnMainMenuEnter") EasyConfig_Chucked.loadConfig() end
+
+Events.OnServerStarted.Add(loadConfig_A)
+Events.OnMainMenuEnter.Add(loadConfig_B)

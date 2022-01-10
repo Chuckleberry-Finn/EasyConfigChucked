@@ -3,10 +3,8 @@ require "ISUI/ISButton"
 require "ISUI/ISControllerTestPanel"
 require "ISUI/ISVolumeControl"
 require "defines"
-require "OptionScreens/MainOptions"
 
 local GameOption = ISBaseObject:derive("GameOption")
-
 
 function GameOption:new(name, control, arg1, arg2)
 	local o = {}
@@ -263,8 +261,4 @@ function MainOptions:create() -- override
 	end
 
 end
-
-Events.OnGameBoot.Add(EasyConfig_Chucked.loadConfig)
-Events.OnServerStarted.Add(EasyConfig_Chucked.loadConfig)
-Events.OnCreatePlayer.Add(EasyConfig_Chucked.loadConfig)
 
