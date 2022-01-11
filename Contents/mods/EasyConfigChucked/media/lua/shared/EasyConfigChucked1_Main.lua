@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MP"))
+Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MP-READY"))
 ---Original EasyConfig found in Sandbox+ (author: derLoko)
 
 EasyConfig_Chucked = EasyConfig_Chucked or {}
@@ -69,7 +69,7 @@ function EasyConfig_Chucked.saveConfig(settingsReceived)
 	if not settingsReceived and isClient() then
 		if isAdmin() or isCoopHost() then
 			print("Easy-Config-Chucked: settings to *save* passed onto server")
-			local settings = EasyConfig_Chucked.loadConfig(nil,true)
+			local settings = EasyConfig_Chucked.loadConfig(nil, true, true)
 			if not settings then
 				print("Easy-Config-Chucked: ERR: No Clientside Settings Loaded.")
 				return
@@ -139,10 +139,10 @@ local world = getWorld()
     local savePath = getAbsoluteSaveFolderName(relPath)
 --]]
 
-function EasyConfig_Chucked.loadConfig(sentSettings, override)
+function EasyConfig_Chucked.loadConfig(sentSettings, override, serverside)
 	if not override and isClient() then
 		print("Easy-Config-Chucked: loading request passed onto server  (A)")
-		sendClientCommand("ConfigFile", "Load", {fluff="fluff"})
+		sendClientCommand("ConfigFile", "Load", nil)
 	else
 
 		local settings = sentSettings or EasyConfig_Chucked.mods
@@ -168,7 +168,7 @@ function EasyConfig_Chucked.loadConfig(sentSettings, override)
 				break
 			end
 
-			local fileReader = EasyConfig_Chucked.getConfigProcessor(modId, "read", (not not sentSettings))
+			local fileReader = EasyConfig_Chucked.getConfigProcessor(modId, "read", (override and serverside))
 			if fileReader then
 				print("Easy-Config-Chucked: loading: modId: "..modId)
 				for _,_ in pairs(config) do
@@ -208,8 +208,26 @@ function EasyConfig_Chucked.loadConfig(sentSettings, override)
 end
 
 
-function loadConfig_A() print("ECC: OnServerStarted") EasyConfig_Chucked.loadConfig() end
-function loadConfig_B() print("ECC: OnMainMenuEnter") EasyConfig_Chucked.loadConfig() end
+function loadConfig_A()
+	print("ECC: OnServerStarted")
+	EasyConfig_Chucked.loadConfig()
+end
+
+function loadConfig_B()
+	print("ECC: OnMainMenuEnter")
+	EasyConfig_Chucked.loadConfig()
+end
+
+function loadConfig_C()
+	print("ECC: OnPlayerMove")
+	if isClient() then
+		EasyConfig_Chucked.loadConfig(nil, true, true)
+	else
+		EasyConfig_Chucked.loadConfig(nil, false, false)
+	end
+end
 
 Events.OnServerStarted.Add(loadConfig_A)
 Events.OnMainMenuEnter.Add(loadConfig_B)
+
+Events.OnCreatePlayer.Add(loadConfig_C)

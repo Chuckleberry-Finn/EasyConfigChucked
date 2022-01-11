@@ -1,5 +1,21 @@
 require "EasyConfigChucked1_Main"
 
+local function debugArg(n,nName)
+	if type(n)=="table" then
+		print(" - "..nName..":")
+		for k,v in pairs(n) do
+			print(" -- "..tostring(k).." "..tostring(v))
+			if type(v)=="table" then
+				for kk,vv in pairs(v) do
+					print(" --- "..tostring(kk).." "..tostring(vv))
+				end
+			end
+		end
+	else
+		print(" - "..nName..":"..tostring(n))
+	end
+end
+
 --if isClient() then sendClientCommand(module, command, args) end -- to send here
 local function onCommand(_module, _command, _dataA, _dataB)
 	--serverside
@@ -10,21 +26,18 @@ local function onCommand(_module, _command, _dataA, _dataB)
 		if _command=="Load" then
 
 			print("Easy-Config-Chucked: clientToServer: LOADING  (B)")
-			print(" -- _dataA:"..tostring(_dataA).." _dataD"..tostring(_dataB))
-			local settings = EasyConfig_Chucked.loadConfig(nil, true)
+			debugArg(_dataA,"_dataA")
+			debugArg(_dataB,"_dataB")
 
+			local settings = EasyConfig_Chucked.loadConfig(nil,true, true)
 			if not settings then
 				print("Easy-Config-Chucked: ERR: No Serverside Settings To Load.")
 				return
 			end
 
-			for k,v in pairs(settings) do
-				print(" - "..tostring(k).." "..tostring(v))
-				for kk,vv in pairs(v) do
-					print(" - - "..tostring(kk).." "..tostring(vv))
-				end
-			end
-			sendServerCommand("ConfigFile", "SendSettings", {settings=settings})
+			debugArg(settings,"settings")
+
+			sendServerCommand("ConfigFile", "SendSettings", settings)
 			--EasyConfig_Chucked.loadConfig(true)
 
 		elseif _command == "Save" then
@@ -34,14 +47,10 @@ local function onCommand(_module, _command, _dataA, _dataB)
 				print("Easy-Config-Chucked: ERR: No Serverside Settings To Save.")
 				return
 			end
-
-			for k,v in pairs(_dataB) do
-				print(" - "..tostring(k).." "..tostring(v))
-				for kk,vv in pairs(v) do
-					print(" - - "..tostring(kk).." "..tostring(vv))
-				end
-			end
+			debugArg(_dataB,"_dataB")
 			EasyConfig_Chucked.saveConfig(_dataB)
+
+			sendServerCommand("ConfigFile", "SendSettings", _dataB)
 		end
 	end
 end
