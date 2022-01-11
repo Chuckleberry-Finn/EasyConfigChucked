@@ -210,7 +210,7 @@ end
 
 function loadConfig_A()
 	print("ECC: OnServerStarted")
-	EasyConfig_Chucked.loadConfig()
+	EasyConfig_Chucked.loadConfig(nil, true, true)
 end
 
 function loadConfig_B()
@@ -219,7 +219,6 @@ function loadConfig_B()
 end
 
 function loadConfig_C()
-	print("ECC: OnPlayerMove")
 	if isClient() then
 		EasyConfig_Chucked.loadConfig(nil, true, true)
 	else
@@ -228,6 +227,5 @@ function loadConfig_C()
 end
 
 Events.OnServerStarted.Add(loadConfig_A)
-Events.OnMainMenuEnter.Add(loadConfig_B)
-
+Events.OnMainMenuEnter.Add(EasyConfig_Chucked.loadConfig())
 Events.OnCreatePlayer.Add(loadConfig_C)
