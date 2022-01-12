@@ -24,32 +24,26 @@ local function onCommand(_module, _command, _dataA, _dataB)
 
 	if _module=="ConfigFile" then
 		if _command=="Load" then
-
 			print("Easy-Config-Chucked: clientToServer: LOADING  (B)")
 			debugArg(_dataA,"_dataA")
 			debugArg(_dataB,"_dataB")
-
 			local settings = EasyConfig_Chucked.loadConfig(nil,true, true)
 			if not settings then
 				print("Easy-Config-Chucked: ERR: No Serverside Settings To Load.")
 				return
 			end
-
 			debugArg(settings,"settings")
-
 			sendServerCommand("ConfigFile", "SendSettings", settings)
-			--EasyConfig_Chucked.loadConfig(true)
 
 		elseif _command == "Save" then
 			print("Easy-Config-Chucked: clientToServer: SAVING")
-
 			if not _dataB then
 				print("Easy-Config-Chucked: ERR: No Serverside Settings To Save.")
 				return
 			end
 			debugArg(_dataB,"_dataB")
-			EasyConfig_Chucked.saveConfig(_dataB)
-
+			EasyConfig_Chucked.loadConfig(_dataB,true, true)
+			EasyConfig_Chucked.saveConfig(_dataB, true)
 			sendServerCommand("ConfigFile", "SendSettings", _dataB)
 		end
 	end

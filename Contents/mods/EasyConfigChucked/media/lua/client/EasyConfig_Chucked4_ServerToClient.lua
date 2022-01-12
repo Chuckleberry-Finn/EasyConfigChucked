@@ -28,6 +28,7 @@ local function onCommand(_module, _command, _dataA, _dataB)
 			debugArg(_dataA,"_dataA")
 			debugArg(_dataB,"_dataB")
 
+			--EasyConfig_Chucked.saveConfig(_dataA, true)
 			EasyConfig_Chucked.loadConfig(_dataA, true, true)
 		end
 	end
