@@ -1,6 +1,26 @@
 Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MP-READY"))
 ---Original EasyConfig found in Sandbox+ (author: derLoko)
 
+
+--https://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
+function table:copy(o, seen)
+	seen = seen or {}
+	if o == nil then return nil end
+	if seen[o] then return seen[o] end
+
+	local no = {}
+	seen[o] = no
+	setmetatable(no, table:copy(getmetatable(o), seen))
+
+	for k, v in next, o, nil do
+		k = (type(k) == 'table') and k:copy(seen) or k
+		v = (type(v) == 'table') and v:copy(seen) or v
+		no[k] = v
+	end
+	return no
+end
+
+
 EasyConfig_Chucked = EasyConfig_Chucked or {}
 EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 
@@ -64,7 +84,7 @@ function EasyConfig_Chucked.getConfigProcessor(modId, command, server)
 end
 
 
-function EasyConfig_Chucked.saveConfig(settingsReceived, override)
+function EasyConfig_Chucked.saveConfig(settingsReceived)
 
 	if not settingsReceived and isClient() then
 		if isAdmin() or isCoopHost() then
@@ -76,14 +96,12 @@ function EasyConfig_Chucked.saveConfig(settingsReceived, override)
 		end
 	else
 
-		local settings = settingsReceived or EasyConfig_Chucked.mods
-
-		if not settings or type(settings)~="table" then
-			print("Easy-Config-Chucked: ERR: SAVE: No settings received.  settings:"..tostring(settings))
-			return
+		if settingsReceived then
+			print("Easy-Config-Chucked: Loaded settings from user  (D)")
+			EasyConfig_Chucked.mods = table.copy(settingsReceived)
 		end
 
-		for modId,mod in pairs(settings) do
+		for modId,mod in pairs(EasyConfig_Chucked.mods) do
 			local config = mod.config
 			local menu = mod.menu
 
@@ -162,14 +180,11 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 		sendClientCommand("ConfigFile", "Load", nil)
 	else
 
-		local settings = sentSettings or EasyConfig_Chucked.mods
-
-		if not settings or type(settings)~="table" then
-			print("Easy-Config-Chucked: ERR: LOAD: No settings Loaded.  settings:"..tostring(settings))
+		if sentSettings then
+			print("Easy-Config-Chucked: Loaded settings from server  (D)")
+			EasyConfig_Chucked.mods = table.copy(sentSettings)
 			return
 		end
-
-		local returnSettings
 
 		for modId,mod in pairs(EasyConfig_Chucked.mods) do
 			EasyConfig_Chucked.prepModForLoad(mod)
@@ -181,64 +196,40 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 				break
 			end
 
-			if sentSettings then
-				print("Easy-Config-Chucked: Loaded settings from server  (D)")
-				for option,value in pairs(menu) do
-					local menuEntry = sentSettings[modId].menu[option]
-					if menuEntry then
-						if menuEntry.options then
-							if menuEntry.optionsKeys[value] then
-								menuEntry.selectedIndex = menuEntry.optionsKeys[value][1]
-								menuEntry.selectedValue = menuEntry.optionsKeys[value][2]
-								menuEntry.selectedLabel = value
-							end
-						else
-							if value == "true" then menuEntry.selectedValue = true
-							elseif value == "false" then menuEntry.selectedValue = false
-							elseif type(value)=="boolean" then menuEntry.selectedValue = value
-							else menuEntry.selectedValue = tonumber(value) end
-						end
-						config[option] = menuEntry.selectedValue
+			local fileReader = EasyConfig_Chucked.getConfigProcessor(modId, "read", (overrideClient and serverside))
+			if fileReader then
+				print("Easy-Config-Chucked: loading: modId: "..modId)
+				for _,_ in pairs(config) do
+					local line = fileReader:readLine()
+					if not line then
+						break
 					end
-				end
-			else
-				local fileReader = EasyConfig_Chucked.getConfigProcessor(modId, "read", (overrideClient and serverside))
-				if fileReader then
-					print("Easy-Config-Chucked: loading: modId: "..modId)
-					for _,_ in pairs(config) do
-						local line = fileReader:readLine()
-						if not line then
-							break
-						end
-						for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
-							local menuEntry = menu[gameOptionName]
-							if menuEntry then
-								if menuEntry.options then
-									if menuEntry.optionsKeys[label] then
-										menuEntry.selectedIndex = menuEntry.optionsKeys[label][1]
-										menuEntry.selectedValue = menuEntry.optionsKeys[label][2]
-										menuEntry.selectedLabel = label
-									end
-								else
-									if label == "true" then menuEntry.selectedValue = true
-									elseif label == "false" then menuEntry.selectedValue = false
-									else menuEntry.selectedValue = tonumber(label) end
+					for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
+						local menuEntry = menu[gameOptionName]
+						if menuEntry then
+							if menuEntry.options then
+								if menuEntry.optionsKeys[label] then
+									menuEntry.selectedIndex = menuEntry.optionsKeys[label][1]
+									menuEntry.selectedValue = menuEntry.optionsKeys[label][2]
+									menuEntry.selectedLabel = label
 								end
-								config[gameOptionName] = menuEntry.selectedValue
 							else
-								print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
+								if label == "true" then menuEntry.selectedValue = true
+								elseif label == "false" then menuEntry.selectedValue = false
+								else menuEntry.selectedValue = tonumber(label) end
 							end
+							config[gameOptionName] = menuEntry.selectedValue
+						else
+							print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
 						end
 					end
-					fileReader:close()
-				else
-					print("ERROR: Easy-Config-Chucked: fileReader not found in loading")
 				end
-				returnSettings = returnSettings or {}
-				returnSettings[modId] = {menu=menu,config=config}
+				fileReader:close()
+			else
+				print("ERROR: Easy-Config-Chucked: fileReader not found in loading")
 			end
 		end
-		return returnSettings
+		return EasyConfig_Chucked.mods
 	end
 end
 
@@ -249,6 +240,7 @@ function loadConfig_OnMainMenuEnter()
 	EasyConfig_Chucked.loadConfig()
 end
 Events.OnMainMenuEnter.Add(loadConfig_OnMainMenuEnter)
+
 
 function loadConfig_OnKeyPressed_MainMenu(key)
 	local mainMenuKey = getCore():getKey("Main Menu")
