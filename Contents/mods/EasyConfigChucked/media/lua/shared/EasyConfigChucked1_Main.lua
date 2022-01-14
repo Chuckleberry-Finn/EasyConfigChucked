@@ -1,49 +1,28 @@
 Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MP-READY"))
 ---Original EasyConfig found in Sandbox+ (author: derLoko)
 
-
---https://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
-function table:copy(o, seen)
-	seen = seen or {}
-	if o == nil then return nil end
-	if seen[o] then return seen[o] end
-
-	local no = {}
-	seen[o] = no
-	setmetatable(no, table:copy(getmetatable(o), seen))
-
-	for k, v in next, o, nil do
-		k = (type(k) == 'table') and k:copy(seen) or k
-		v = (type(v) == 'table') and v:copy(seen) or v
-		no[k] = v
-	end
-	return no
-end
-
-
 EasyConfig_Chucked = EasyConfig_Chucked or {}
 EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
+
 
 function EasyConfig_Chucked.prepModForLoad(mod)
 	--link all the things!
 	for gameOptionName,menuEntry in pairs(mod.menu) do
-		if menuEntry then
-			if menuEntry.options then
-				menuEntry.optionsIndexes = menuEntry.options
-				menuEntry.optionsKeys = {}
-				menuEntry.optionsValues = {}
-				menuEntry.optionLabels = {} -- passed on to UI elements
-				for i,table in ipairs(menuEntry.optionsIndexes) do
-					menuEntry.optionLabels[i] = table[1]
-					local k = table[1]
-					local v = table[2]
-					menuEntry.optionsKeys[k] = {i, v}
-					menuEntry.optionsValues[v] = {i, k}
-				end
+		if menuEntry and menuEntry.options then
+			menuEntry.optionsIndexes = menuEntry.options
+			menuEntry.optionsKeys = {}
+			menuEntry.optionsValues = {}
+			menuEntry.optionLabels = {} -- passed on to UI elements
+
+			for i,table in ipairs(menuEntry.optionsIndexes) do
+				menuEntry.optionLabels[i] = table[1]
+				local k = table[1]
+				local v = table[2]
+				menuEntry.optionsKeys[k] = {i, v}
+				menuEntry.optionsValues[v] = {i, k}
 			end
 		end
 	end
-
 	for gameOptionName,value in pairs(mod.config) do
 		local menuEntry = mod.menu[gameOptionName]
 		if menuEntry then
@@ -84,28 +63,35 @@ function EasyConfig_Chucked.getConfigProcessor(modId, command, server)
 end
 
 
-function EasyConfig_Chucked.saveConfig(settingsReceived)
+function EasyConfig_Chucked.saveConfig(override)
 
-	if not settingsReceived and isClient() then
+	if not override and isClient() then
 		if isAdmin() or isCoopHost() then
 			print("Easy-Config-Chucked: settings to *save* passed onto server")
-			sendClientCommand("ConfigFile", "Save", EasyConfig_Chucked.mods)
+			local settingsToSend = {}
+			for modId,mod in pairs(EasyConfig_Chucked.mods) do
+				print(" -- mod: "..modId)
+				local menu = mod.menu
+				local config = mod.config
+
+				for option,value in pairs(config) do
+					print(" ---- "..option.." = "..tostring(value))
+					settingsToSend[modId] = settingsToSend[modId] or {}
+					settingsToSend[modId][option] = menu[option].selectedValue
+				end
+			end
+			sendClientCommand("ConfigFile", "Save", settingsToSend)
 		else
 			print("Easy-Config-Chucked: MP GameMode Detected: Not Host/Admin: Saving Prevented")
 			return
 		end
 	else
 
-		if settingsReceived then
-			print("Easy-Config-Chucked: Loaded settings from user  (D)")
-			EasyConfig_Chucked.mods = table.copy(settingsReceived)
-		end
-
 		for modId,mod in pairs(EasyConfig_Chucked.mods) do
 			local config = mod.config
 			local menu = mod.menu
 
-			local fileWriter  = EasyConfig_Chucked.getConfigProcessor(modId, "write", (not not settingsReceived))
+			local fileWriter  = EasyConfig_Chucked.getConfigProcessor(modId, "write", override)
 			if not fileWriter then
 				print("ERROR: Easy-Config-Chucked: fileReader not found in saving")
 			else
@@ -146,33 +132,28 @@ function EasyConfig_Chucked.saveConfig(settingsReceived)
 	end
 end
 
---[[
-local world = getWorld()
-    local relPath = world:getGameMode() .. getFileSeparator() .. world:getWorld()
-    local savePath = getAbsoluteSaveFolderName(relPath)
---]]
 
-function EasyConfig_Chucked.applySettings(fromTable,toTable)
-	for option,value in pairs(toTable) do
-		local menuEntry = fromTable.menu[option]
-		if menuEntry then
-			if menuEntry.options then
-				if menuEntry.optionsKeys[value] then
-					menuEntry.selectedIndex = menuEntry.optionsKeys[value][1]
-					menuEntry.selectedValue = menuEntry.optionsKeys[value][2]
-					menuEntry.selectedLabel = value
-				end
-			else
-				if value == "true" then menuEntry.selectedValue = true
-				elseif value == "false" then menuEntry.selectedValue = false
-				elseif type(value)=="boolean" then menuEntry.selectedValue = value
-				else menuEntry.selectedValue = tonumber(value) end
+function EasyConfig_Chucked.setMenuEntry(menu,gameOptionName,label)
+	local menuEntry = menu[gameOptionName]
+	if menuEntry then
+		local _label = tostring(label)
+		if menuEntry.options then
+			if menuEntry.optionsKeys[_label] then
+				menuEntry.selectedIndex = menuEntry.optionsKeys[_label][1]
+				menuEntry.selectedValue = menuEntry.optionsKeys[_label][2]
+				menuEntry.selectedLabel = _label
 			end
-			toTable[option] = menuEntry.selectedValue
+		else
+			if _label == "true" then menuEntry.selectedValue = true
+			elseif _label == "false" then menuEntry.selectedValue = false
+			else menuEntry.selectedValue = tonumber(_label) end
 		end
+
+		return menuEntry.selectedValue
+	else
+		print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
 	end
 end
-
 
 function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 	if not overrideClient and isClient() then
@@ -182,10 +163,22 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 
 		if sentSettings then
 			print("Easy-Config-Chucked: Loaded settings from server  (D)")
-			EasyConfig_Chucked.mods = table.copy(sentSettings)
+			for modId,settings in pairs(sentSettings) do
+				print(" -- mod: "..modId)
+				local config = EasyConfig_Chucked.mods[modId].config
+				local menu = EasyConfig_Chucked.mods[modId].menu
+				for option,value in pairs(settings) do
+					print(" ---- "..option.." = "..tostring(value))
+
+					local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,option,value)
+					config[option] = returnedValue
+				end
+
+			end
 			return
 		end
 
+		local returnSettings = {}
 		for modId,mod in pairs(EasyConfig_Chucked.mods) do
 			EasyConfig_Chucked.prepModForLoad(mod)
 			local config = mod.config
@@ -205,23 +198,10 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 						break
 					end
 					for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
-						local menuEntry = menu[gameOptionName]
-						if menuEntry then
-							if menuEntry.options then
-								if menuEntry.optionsKeys[label] then
-									menuEntry.selectedIndex = menuEntry.optionsKeys[label][1]
-									menuEntry.selectedValue = menuEntry.optionsKeys[label][2]
-									menuEntry.selectedLabel = label
-								end
-							else
-								if label == "true" then menuEntry.selectedValue = true
-								elseif label == "false" then menuEntry.selectedValue = false
-								else menuEntry.selectedValue = tonumber(label) end
-							end
-							config[gameOptionName] = menuEntry.selectedValue
-						else
-							print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
-						end
+						local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,config,gameOptionName,label)
+						config[gameOptionName] = returnedValue
+						returnSettings[modId] = returnSettings[modId] or {}
+						returnSettings[modId][gameOptionName] = returnedValue
 					end
 				end
 				fileReader:close()
@@ -229,24 +209,6 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 				print("ERROR: Easy-Config-Chucked: fileReader not found in loading")
 			end
 		end
-		return EasyConfig_Chucked.mods
+		return returnSettings
 	end
 end
-
-
-
-function loadConfig_OnMainMenuEnter()
-	print("ECC: OnMainMenuEnter")
-	EasyConfig_Chucked.loadConfig()
-end
-Events.OnMainMenuEnter.Add(loadConfig_OnMainMenuEnter)
-
-
-function loadConfig_OnKeyPressed_MainMenu(key)
-	local mainMenuKey = getCore():getKey("Main Menu")
-	if (key == mainMenuKey) or (mainMenuKey == 0 and key == Keyboard.KEY_ESCAPE) then
-		print("ECC: OnKeyPressed "..(getPlayer():getUsername()))
-		EasyConfig_Chucked.loadConfig()
-	end
-end
-Events.OnKeyPressed.Add(loadConfig_OnKeyPressed_MainMenu)

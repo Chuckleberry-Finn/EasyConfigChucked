@@ -18,10 +18,17 @@ local function onCommand(_module, _command, _dataA, _dataB)
 				print("Easy-Config-Chucked: ERR: No Serverside Settings To Save.")
 				return
 			end
-			EasyConfig_Chucked.saveConfig(_dataB)
+			EasyConfig_Chucked.loadConfig(_dataB, true, true)
+			EasyConfig_Chucked.saveConfig(true)
 			sendServerCommand("ConfigFile", "SendSettings", _dataB)
 		end
 	end
 end
 Events.OnClientCommand.Add(onCommand)--/client/ to server
 --sendServerCommand("sendLooper", _dataB.command, _dataB) -- to send to /client
+
+function serverLoadConfig()
+	print("ECC: OnMainMenuEnter")
+	EasyConfig_Chucked.loadConfig()
+end
+Events.OnMainMenuEnter.Add(serverLoadConfig)
