@@ -72,9 +72,8 @@ function EasyConfig_Chucked.saveConfig(override)
 			for modId,mod in pairs(EasyConfig_Chucked.mods) do
 				print(" -- mod: "..modId)
 				local menu = mod.menu
-				local config = mod.config
 
-				for option,value in pairs(config) do
+				for option,value in pairs(menu) do
 					print(" ---- "..option.." = "..tostring(value))
 					settingsToSend[modId] = settingsToSend[modId] or {}
 					settingsToSend[modId][option] = menu[option].selectedValue
@@ -151,7 +150,7 @@ function EasyConfig_Chucked.setMenuEntry(menu,gameOptionName,label)
 
 		return menuEntry.selectedValue
 	else
-		print("ERROR: Easy-Config-Chucked: menuEntry=null (loadConfig)")
+		print("ERROR: Easy-Config-Chucked: menuEntry=null (gameOptionName:"..tostring(gameOptionName).."=label:"..tostring(label)..") (loadConfig)")
 	end
 end
 
@@ -198,7 +197,7 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 						break
 					end
 					for gameOptionName,label in string.gmatch(line, "([^=]*)=([^=]*),") do
-						local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,config,gameOptionName,label)
+						local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,gameOptionName,label)
 						config[gameOptionName] = returnedValue
 						returnSettings[modId] = returnSettings[modId] or {}
 						returnSettings[modId][gameOptionName] = returnedValue
