@@ -28,7 +28,6 @@ function GameOption:new(name, control, arg1, arg2)
 	end
 
 	if (not control.isCombobox) and (not control.isTickBox) and (not control.isSlider) then
-		local go = o.gameOptions
 		control.onChange = function() o.gameOptions.changed = true end
 	end
 

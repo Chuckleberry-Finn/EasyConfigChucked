@@ -17,7 +17,7 @@ function sandboxPlusEasyConfigOverride()
 
 	if SBP and SP then
 
-		print("Easy-Config-Chucked: OLD Easy Config Found: "..SP.modId)
+		if getDebug() then print("Easy-Config-Chucked: OLD Easy Config Found: "..SP.modId) end
 		for kk,vv in pairs(SP) do print(" -- "..tostring(kk).." = "..tostring(vv)) end
 
 		local newMod = {}
@@ -35,10 +35,10 @@ function sandboxPlusEasyConfigOverride()
 		EasyConfig_Chucked = EasyConfig_Chucked or {}
 		EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 		EasyConfig_Chucked.mods[newMod.modId] = newMod
-	else
-		if not SBP then print("--Easy-Config-Chucked: SBP not found") end
-		if not SP then print("--Easy-Config-Chucked: SP not found") end
-		end
+	--else
+		--if not SBP then print("--Easy-Config-Chucked: SBP not found") end
+		--if not SP then print("--Easy-Config-Chucked: SP not found") end
+	end
 end
 
 

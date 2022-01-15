@@ -7,7 +7,7 @@ EasyConfig_Chucked.mods = EasyConfig_Chucked.mods or {}
 
 function EasyConfig_Chucked.prepModForLoad(mod)
 	--link all the things!
-	for gameOptionName,menuEntry in pairs(mod.menu) do
+	for _,menuEntry in pairs(mod.menu) do
 		if menuEntry and menuEntry.options then
 			menuEntry.optionsIndexes = menuEntry.options
 			menuEntry.optionsKeys = {}
@@ -46,14 +46,14 @@ function EasyConfig_Chucked.getConfigProcessor(modId, command, server)
 
 	if server then
 		local relPath = "EasyConfigChuckedServerConfigs"..getFileSeparator()..string.gsub(world:getWorld(), "_player", "").."_"..configSavePath
-		print("ECC-FILESYSTEM: expected-MP:"..world:getGameMode().." "..command.." absPath: "..relPath)
+		if getDebug() then print("ECC-FILESYSTEM: expected-MP:"..world:getGameMode().." "..command.." absPath: "..relPath) end
 		if command == "write" then
 			return getFileWriter(relPath, true, false)
 		elseif command == "read" then
 			return getFileReader(relPath, false)
 		end
 	else
-		print("ECC-FILESYSTEM: expected-SP:"..world:getGameMode().." "..command.." absPath: "..configSavePath)
+		if getDebug() then print("ECC-FILESYSTEM: expected-SP:"..world:getGameMode().." "..command.." absPath: "..configSavePath) end
 		if command == "write" then
 			return getModFileWriter(modId, configSavePath, true, false)
 		elseif command == "read" then
@@ -67,21 +67,21 @@ function EasyConfig_Chucked.saveConfig(override)
 
 	if not override and isClient() then
 		if isAdmin() or isCoopHost() then
-			print("Easy-Config-Chucked: settings to *save* passed onto server")
+			if getDebug() then print("Easy-Config-Chucked: settings to *save* passed onto server") end
 			local settingsToSend = {}
 			for modId,mod in pairs(EasyConfig_Chucked.mods) do
-				print(" -- mod: "..modId)
+				if getDebug() then print(" -- mod: "..modId) end
 				local menu = mod.menu
 
 				for option,value in pairs(menu) do
-					print(" ---- "..option.." = "..tostring(value))
+					if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
 					settingsToSend[modId] = settingsToSend[modId] or {}
 					settingsToSend[modId][option] = menu[option].selectedValue
 				end
 			end
 			sendClientCommand("ConfigFile", "Save", settingsToSend)
 		else
-			print("Easy-Config-Chucked: MP GameMode Detected: Not Host/Admin: Saving Prevented")
+			if getDebug() then print("Easy-Config-Chucked: MP GameMode Detected: Not Host/Admin: Saving Prevented") end
 			return
 		end
 	else
@@ -92,9 +92,9 @@ function EasyConfig_Chucked.saveConfig(override)
 
 			local fileWriter  = EasyConfig_Chucked.getConfigProcessor(modId, "write", override)
 			if not fileWriter then
-				print("ERROR: Easy-Config-Chucked: fileReader not found in saving")
+				if getDebug() then print("ERROR: Easy-Config-Chucked: fileReader not found in saving") end
 			else
-				print("Easy-Config-Chucked: saving: modId:"..modId)
+				if getDebug() then print("Easy-Config-Chucked: saving: modId:"..modId) end
 				for gameOptionName,_ in pairs(config) do
 					local menuEntry = menu[gameOptionName]
 					if menuEntry then
@@ -106,7 +106,7 @@ function EasyConfig_Chucked.saveConfig(override)
 							if menuEntry_selectedLabel then
 								fileWriter:write(gameOptionName.."="..menuEntry_selectedLabel..",\r")
 							else
-								print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry_selectedLabel=null (saveConfig) aborted.")
+								if getDebug() then print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry_selectedLabel=null (saveConfig) aborted.") end
 							end
 						elseif menuEntry.selectedValue then
 							local menuEntry_selectedValue = menuEntry.selectedValue
@@ -116,13 +116,13 @@ function EasyConfig_Chucked.saveConfig(override)
 							if menuEntry_selectedValue then
 								fileWriter:write(gameOptionName.."="..menuEntry_selectedValue..",\r")
 							else
-								print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry_selectedValue=null (saveConfig) aborted.")
+								if getDebug() then print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry_selectedValue=null (saveConfig) aborted.") end
 							end
 						else
-							print("WARN: Easy-Config-Chucked: "..gameOptionName..": selectedLabel and selectedValue = null (saveConfig)")
+							if getDebug() then print("WARN: Easy-Config-Chucked: "..gameOptionName..": selectedLabel and selectedValue = null (saveConfig)") end
 						end
 					else
-						print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry=null (saveConfig)")
+						if getDebug() then print("WARN: Easy-Config-Chucked: "..gameOptionName..": menuEntry=null (saveConfig)") end
 					end
 				end
 				fileWriter:close()
@@ -150,24 +150,24 @@ function EasyConfig_Chucked.setMenuEntry(menu,gameOptionName,label)
 
 		return menuEntry.selectedValue
 	else
-		print("ERROR: Easy-Config-Chucked: menuEntry=null (gameOptionName:"..tostring(gameOptionName).."=label:"..tostring(label)..") (loadConfig)")
+		if getDebug() then print("ERROR: Easy-Config-Chucked: menuEntry=null (gameOptionName:"..tostring(gameOptionName).."=label:"..tostring(label)..") (loadConfig)") end
 	end
 end
 
 function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 	if not overrideClient and isClient() then
-		print("Easy-Config-Chucked: loading request passed onto server  (A)")
+		if getDebug() then print("Easy-Config-Chucked: loading request passed onto server  (A)") end
 		sendClientCommand("ConfigFile", "Load", nil)
 	else
 
 		if sentSettings then
-			print("Easy-Config-Chucked: Loaded settings from server  (D)")
+			if getDebug() then print("Easy-Config-Chucked: Loaded settings from server  (D)") end
 			for modId,settings in pairs(sentSettings) do
-				print(" -- mod: "..modId)
+				if getDebug() then print(" -- mod: "..modId) end
 				local config = EasyConfig_Chucked.mods[modId].config
 				local menu = EasyConfig_Chucked.mods[modId].menu
 				for option,value in pairs(settings) do
-					print(" ---- "..option.." = "..tostring(value))
+					if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
 
 					local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,option,value)
 					config[option] = returnedValue
@@ -184,13 +184,13 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 			local menu = mod.menu
 
 			if not config or not menu then
-				print("ERROR: Easy-Config-Chucked: config=null or menu=null "..modId.." (loadConfig)")
+				if getDebug() then print("ERROR: Easy-Config-Chucked: config=null or menu=null "..modId.." (loadConfig)") end
 				break
 			end
 
 			local fileReader = EasyConfig_Chucked.getConfigProcessor(modId, "read", (overrideClient and serverside))
 			if fileReader then
-				print("Easy-Config-Chucked: loading: modId: "..modId)
+				if getDebug() then print("Easy-Config-Chucked: loading: modId: "..modId) end
 				for _,_ in pairs(config) do
 					local line = fileReader:readLine()
 					if not line then
@@ -205,7 +205,7 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 				end
 				fileReader:close()
 			else
-				print("ERROR: Easy-Config-Chucked: fileReader not found in loading")
+				if getDebug() then print("ERROR: Easy-Config-Chucked: fileReader not found in loading") end
 			end
 		end
 		return returnSettings

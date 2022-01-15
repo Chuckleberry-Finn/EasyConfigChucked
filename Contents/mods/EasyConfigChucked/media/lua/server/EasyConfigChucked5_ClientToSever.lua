@@ -1,21 +1,21 @@
 require "EasyConfigChucked1_Main"
 
 --if isClient() then sendClientCommand(module, command, args) end -- to send here
-local function onCommand(_module, _command, _dataA, _dataB)
+local function onCommand(_module, _command, _, _dataB)
 	--serverside
 
 	print("onCommand: _module:".._module.."  _command:".._command)
 
 	if _module=="ConfigFile" then
 		if _command=="Load" then
-			print("Easy-Config-Chucked: clientToServer: LOADING  (B)  isServer:"..tostring(isServer()).." isClient:"..tostring(isClient()))
+			if getDebug() then print("Easy-Config-Chucked: clientToServer: LOADING  (B)  isServer:"..tostring(isServer()).." isClient:"..tostring(isClient())) end
 			local settings = EasyConfig_Chucked.loadConfig(nil, true, true)
 			sendServerCommand("ConfigFile", "SendSettings", settings)
 
 		elseif _command == "Save" then
-			print("Easy-Config-Chucked: clientToServer: SAVING  isServer:"..tostring(isServer()).." isClient:"..tostring(isClient()))
+			if getDebug() then print("Easy-Config-Chucked: clientToServer: SAVING  isServer:"..tostring(isServer()).." isClient:"..tostring(isClient())) end
 			if not _dataB then
-				print("Easy-Config-Chucked: ERR: No Serverside Settings To Save.")
+				if getDebug() then print("Easy-Config-Chucked: ERR: No Serverside Settings To Save.") end
 				return
 			end
 			EasyConfig_Chucked.loadConfig(_dataB, true, true)
@@ -28,7 +28,7 @@ Events.OnClientCommand.Add(onCommand)--/client/ to server
 --sendServerCommand("sendLooper", _dataB.command, _dataB) -- to send to /client
 
 function serverLoadConfig()
-	print("ECC: OnMainMenuEnter")
+	if getDebug() then print("ECC: OnMainMenuEnter") end
 	EasyConfig_Chucked.loadConfig()
 end
 Events.OnMainMenuEnter.Add(serverLoadConfig)
