@@ -167,7 +167,7 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 				local config = EasyConfig_Chucked.mods[modId].config
 				local menu = EasyConfig_Chucked.mods[modId].menu
 				for option,value in pairs(settings) do
-					if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
+					--if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
 
 					local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,option,value)
 					config[option] = returnedValue
