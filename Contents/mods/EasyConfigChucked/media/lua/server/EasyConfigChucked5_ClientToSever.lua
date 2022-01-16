@@ -28,6 +28,9 @@ Events.OnClientCommand.Add(onCommand)--/client/ to server
 
 function serverLoadConfig()
 	if getDebug() then print("ECC: OnMainMenuEnter") end
+	for _,mod in pairs(EasyConfig_Chucked.mods) do
+		EasyConfig_Chucked.prepModForLoad(mod)
+	end
 	EasyConfig_Chucked.loadConfig()
 end
 Events.OnMainMenuEnter.Add(serverLoadConfig)
