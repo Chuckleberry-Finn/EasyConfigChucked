@@ -3,8 +3,7 @@ require "EasyConfigChucked1_Main"
 --if isClient() then sendClientCommand(module, command, args) end -- to send here
 local function onCommand(_module, _command, _, _dataB)
 	--serverside
-
-	print("onCommand: _module:".._module.."  _command:".._command)
+	--print("onCommand: _module:".._module.."  _command:".._command)
 
 	if _module=="ConfigFile" then
 		if _command=="Load" then

@@ -74,7 +74,7 @@ function EasyConfig_Chucked.saveConfig(override)
 				local menu = mod.menu
 
 				for option,value in pairs(menu) do
-					if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
+					--if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
 					settingsToSend[modId] = settingsToSend[modId] or {}
 					settingsToSend[modId][option] = menu[option].selectedValue
 				end
@@ -179,7 +179,6 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 
 		local returnSettings = {}
 		for modId,mod in pairs(EasyConfig_Chucked.mods) do
-			EasyConfig_Chucked.prepModForLoad(mod)
 			local config = mod.config
 			local menu = mod.menu
 

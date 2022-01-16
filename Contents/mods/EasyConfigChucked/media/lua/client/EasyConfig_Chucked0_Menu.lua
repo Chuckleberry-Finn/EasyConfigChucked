@@ -42,6 +42,10 @@ end
 local EasyConfig_MainOptions_create = MainOptions.create
 function MainOptions:create() -- override
 
+	for modId,mod in pairs(EasyConfig_Chucked.mods) do
+		EasyConfig_Chucked.prepModForLoad(mod)
+	end
+
 	if EasyConfig_MainOptions_create then
 		EasyConfig_MainOptions_create(self) -- call original
 	end
