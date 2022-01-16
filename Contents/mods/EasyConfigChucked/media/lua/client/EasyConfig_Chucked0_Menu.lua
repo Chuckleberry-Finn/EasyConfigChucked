@@ -63,7 +63,6 @@ function MainOptions:create() -- override
 			end
 		end
 		EasyConfig_Chucked.saveConfig()
-		EasyConfig_Chucked.loadConfig()
 		self.changed = false
 		return EasyConfig_self_gameOptions_apply(self)
 	end
