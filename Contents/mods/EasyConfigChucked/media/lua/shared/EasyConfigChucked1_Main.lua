@@ -72,11 +72,12 @@ function EasyConfig_Chucked.saveConfig(override)
 			for modId,mod in pairs(EasyConfig_Chucked.mods) do
 				if getDebug() then print(" -- mod: "..modId) end
 				local menu = mod.menu
-
+				local config = mod.config
 				for option,value in pairs(menu) do
 					--if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
 					settingsToSend[modId] = settingsToSend[modId] or {}
 					settingsToSend[modId][option] = menu[option].selectedValue
+					config = menu[option].selectedValue
 				end
 			end
 			sendClientCommand("ConfigFile", "Save", settingsToSend)
@@ -97,9 +98,11 @@ function EasyConfig_Chucked.saveConfig(override)
 				if getDebug() then print("Easy-Config-Chucked: saving: modId:"..modId) end
 				for gameOptionName,_ in pairs(config) do
 					local menuEntry = menu[gameOptionName]
+					local configEntry = config[gameOptionName]
 					if menuEntry then
 						if menuEntry.selectedLabel then
 							local menuEntry_selectedLabel = menuEntry.selectedLabel
+							configEntry = menuEntry.selectedLabel
 							if type(menuEntry.selectedLabel) == "boolean" then
 								menuEntry_selectedLabel = tostring(menuEntry_selectedLabel)
 							end
@@ -110,6 +113,7 @@ function EasyConfig_Chucked.saveConfig(override)
 							end
 						elseif menuEntry.selectedValue then
 							local menuEntry_selectedValue = menuEntry.selectedValue
+							configEntry = menuEntry.selectedValue
 							if type(menuEntry.selectedValue) == "boolean" then
 								menuEntry_selectedValue = tostring(menuEntry_selectedValue)
 							end
