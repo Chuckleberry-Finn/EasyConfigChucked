@@ -274,8 +274,11 @@ Events.OnMainMenuEnter.Add(clientLoadConfig)
 function clientLoadConfig2(key)
 	local mainMenuKey = getCore():getKey("Main Menu")
 	if (key == mainMenuKey) or (mainMenuKey == 0 and key == Keyboard.KEY_ESCAPE) then
-		print("ECC: OnKeyPressed "..(getPlayer():getUsername()))
-		EasyConfig_Chucked.loadConfig()
+		local player = getPlayer()
+		if player then
+			print("ECC: OnKeyPressed "..(player:getUsername()))
+			EasyConfig_Chucked.loadConfig()
+		end
 	end
 end
 Events.OnKeyPressed.Add(clientLoadConfig2)

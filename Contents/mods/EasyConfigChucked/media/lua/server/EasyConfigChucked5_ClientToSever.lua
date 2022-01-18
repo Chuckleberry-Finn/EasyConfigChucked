@@ -26,6 +26,7 @@ end
 Events.OnClientCommand.Add(onCommand)--/client/ to server
 --sendServerCommand("sendLooper", _dataB.command, _dataB) -- to send to /client
 
+
 function serverLoadConfig()
 	if getDebug() then print("ECC: OnMainMenuEnter") end
 	for _,mod in pairs(EasyConfig_Chucked.mods) do
