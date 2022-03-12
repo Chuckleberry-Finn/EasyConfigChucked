@@ -168,15 +168,18 @@ function EasyConfig_Chucked.loadConfig(sentSettings, overrideClient, serverside)
 			if getDebug() then print("Easy-Config-Chucked: Loaded settings from server  (D)") end
 			for modId,settings in pairs(sentSettings) do
 				if getDebug() then print(" -- mod: "..modId) end
-				local config = EasyConfig_Chucked.mods[modId].config
-				local menu = EasyConfig_Chucked.mods[modId].menu
-				for option,value in pairs(settings) do
-					--if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
 
-					local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,option,value)
-					config[option] = returnedValue
+				local modFound = EasyConfig_Chucked.mods[modId]
+				if modFound then
+					local config = modFound.config
+					local menu = modFound.menu
+					for option,value in pairs(settings) do
+						--if getDebug() then print(" ---- "..option.." = "..tostring(value)) end
+
+						local returnedValue = EasyConfig_Chucked.setMenuEntry(menu,option,value)
+						config[option] = returnedValue
+					end
 				end
-
 			end
 			return
 		end
