@@ -1,9 +1,6 @@
 require "EasyConfigChucked1_Main"
 
---if isClient() then sendClientCommand(module, command, args) end -- to send here
 local function onCommand(_module, _command, _, _dataB)
-	--serverside
-	--print("onCommand: _module:".._module.."  _command:".._command)
 
 	if _module=="ConfigFile" then
 		if _command=="Load" then
@@ -24,7 +21,6 @@ local function onCommand(_module, _command, _, _dataB)
 	end
 end
 Events.OnClientCommand.Add(onCommand)--/client/ to server
---sendServerCommand("sendLooper", _dataB.command, _dataB) -- to send to /client
 
 
 function serverLoadConfig()
