@@ -135,7 +135,9 @@ function MainOptions:create() -- override
 
 					--- TEXT ---
 					if menuEntry.type == "Text" then
-						addText(menuEntry.text, menuEntry.font, menuEntry.r, menuEntry.g, menuEntry.b, menuEntry.a, menuEntry.customX)
+						local text = getTextOrNull("UI_Config_"..menuEntry.text) or menuEntry.text
+						if menuEntry.addAfter then text = text..menuEntry.addAfter end
+						addText(text, menuEntry.font, menuEntry.r, menuEntry.g, menuEntry.b, menuEntry.a, menuEntry.customX)
 					end
 
 					--- SPACE ---
@@ -148,7 +150,8 @@ function MainOptions:create() -- override
 
 					--- TICK BOX ---
 					if menuEntry.type == "Tickbox" then
-						local box = addTickBox(menuEntry.title)
+						local title = getTextOrNull("UI_Config_"..menuEntry.title) or menuEntry.title
+						local box = addTickBox(title)
 						local gameOption = GameOption:new(gameOptionName, box)
 						function gameOption.toUI(self)
 							local box = self.control
@@ -166,7 +169,8 @@ function MainOptions:create() -- override
 
 					--- NUMBER BOX ---
 					if menuEntry.type == "Numberbox" then
-						local box = addNumberBox(menuEntry.title)
+						local title = getTextOrNull("UI_Config_"..menuEntry.title) or menuEntry.title
+						local box = addNumberBox(title)
 						local gameOption = GameOption:new(gameOptionName, box)
 						function gameOption.toUI(self)
 							local box = self.control
@@ -184,9 +188,17 @@ function MainOptions:create() -- override
 					if menuEntry.type == "Combobox" and menuEntry.title and menuEntry.optionLabels then
 						if (type(menuEntry.optionLabels) == "table") and #menuEntry.optionLabels>0 then
 							--addCombo(x,y,w,h, name,options, selected, target, onchange)
-							local box = self:addCombo(x,y,200,20, menuEntry.title, menuEntry.optionLabels)
+							local title = getTextOrNull("UI_Config_"..menuEntry.title) or menuEntry.title
+
+							local labels = {}
+							for k,option in pairs(menuEntry.optionLabels) do
+								table.insert(labels, getTextOrNull("UI_Config_"..menuEntry.title.."_option"..k) or option)
+							end
+
+							local box = self:addCombo(x,y,200,20, title, labels)
 							if menuEntry.tooltip then
-								box:setToolTipMap({defaultTooltip = menuEntry.tooltip})
+								local tooltip = getTextOrNull("UI_Config_"..menuEntry.title.."_tooltip") or menuEntry.tooltip
+								box:setToolTipMap({defaultTooltip = tooltip})
 							end
 							local gameOption = GameOption:new(gameOptionName, box)
 							function gameOption.toUI(self)
@@ -204,6 +216,7 @@ function MainOptions:create() -- override
 						end
 					end
 
+					--[[
 					--- SPIN BOX ---
 					if menuEntry.type == "Spinbox" and menuEntry.title and menuEntry.optionLabels then
 						if (type(menuEntry.optionLabels) == "table") and #menuEntry.optionLabels>0 then
@@ -223,6 +236,7 @@ function MainOptions:create() -- override
 							self.gameOptions:add(gameOption)
 						end
 					end
+					--]]
 				end
 			end
 		end
@@ -239,7 +253,7 @@ function MainOptions:create() -- override
 		if isClient() then
 			if not (isAdmin() or isCoopHost()) then
 				invalidAccess = true
-				addText("This mod's options can only be accessed by an admin or the host.", UIFont.Medium, 1, 1, 1, 1, -125)
+				addText(getText("IGUI_NotHostNotAdminAccessDenied"), UIFont.Medium, 1, 1, 1, 1, -125)
 			end
 		end
 
@@ -247,11 +261,11 @@ function MainOptions:create() -- override
 		else
 			invalidAccess = true
 			if (not getPlayer() and mod.menuSpecificAccess=="ingame") then
-				addText("This mod's options can only be accessed from the in-game options menu.", UIFont.Medium, 1, 1, 1, 1, -125)
+				addText(getText("IGUI_InGameAccessOnly"), UIFont.Medium, 1, 1, 1, 1, -125)
 			end
 			if (getPlayer() and mod.menuSpecificAccess=="mainmenu") then
-				addText("This mod has options that can only be accessed from the main-menu options.", UIFont.Medium, 1, 1, 1, 1, -125)
-				addText("Note: Make sure to enable this mod from the main-menu to view the options.", UIFont.Small, 1, 1, 1, 1, -125)
+				addText(getText("IGUI_MainMenuAccessOnly1"), UIFont.Medium, 1, 1, 1, 1, -125)
+				addText(getText("IGUI_MainMenuAccessOnly2"), UIFont.Small, 1, 1, 1, 1, -125)
 			end
 			addText(" ", UIFont.Medium)
 		end

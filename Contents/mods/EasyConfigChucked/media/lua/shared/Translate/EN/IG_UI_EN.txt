@@ -1,0 +1,9 @@
+IGUI_EN = {
+
+    IGUI_NotHostNotAdminAccessDenied = "This mod's options can only be accessed by an admin or the host.",
+    IGUI_InGameAccessOnly = "This mod's options can only be accessed from the in-game options menu.",
+    IGUI_MainMenuAccessOnly1 = "This mod has options that can only be accessed from the main-menu options.",
+    IGUI_MainMenuAccessOnly1 = "Note: Make sure to enable this mod from the main-menu to view the options.",
+
+
+}
