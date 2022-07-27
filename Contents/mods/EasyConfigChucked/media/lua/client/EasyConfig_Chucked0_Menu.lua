@@ -38,6 +38,11 @@ function GameOption:onChange()
 	self.gameOptions:onChange(self)
 end
 
+local function ecc_getText(text, notActually, suffix)
+	if notActually then return text end
+	suffix = suffix or ""
+	return getText("UI_Config_"..text..suffix)
+end
 
 local EasyConfig_MainOptions_create = MainOptions.create
 function MainOptions:create() -- override
@@ -135,7 +140,7 @@ function MainOptions:create() -- override
 
 					--- TEXT ---
 					if menuEntry.type == "Text" then
-						local text = getTextOrNull("UI_Config_"..menuEntry.text) or menuEntry.text
+						local text = ecc_getText(gameOptionName, menuEntry.noTranslate)
 						if menuEntry.addAfter then text = text..menuEntry.addAfter end
 						addText(text, menuEntry.font, menuEntry.r, menuEntry.g, menuEntry.b, menuEntry.a, menuEntry.customX)
 					end
@@ -150,7 +155,7 @@ function MainOptions:create() -- override
 
 					--- TICK BOX ---
 					if menuEntry.type == "Tickbox" then
-						local title = getTextOrNull("UI_Config_"..menuEntry.title) or menuEntry.title
+						local title = ecc_getText(gameOptionName, menuEntry.noTranslate)
 						local box = addTickBox(title)
 						local gameOption = GameOption:new(gameOptionName, box)
 						function gameOption.toUI(self)
@@ -169,7 +174,7 @@ function MainOptions:create() -- override
 
 					--- NUMBER BOX ---
 					if menuEntry.type == "Numberbox" then
-						local title = getTextOrNull("UI_Config_"..menuEntry.title) or menuEntry.title
+						local title = ecc_getText(gameOptionName, menuEntry.noTranslate)
 						local box = addNumberBox(title)
 						local gameOption = GameOption:new(gameOptionName, box)
 						function gameOption.toUI(self)
@@ -185,19 +190,19 @@ function MainOptions:create() -- override
 					end
 
 					--- COMBO BOX ---
-					if menuEntry.type == "Combobox" and menuEntry.title and menuEntry.optionLabels then
+					if menuEntry.type == "Combobox" and menuEntry.optionLabels then
 						if (type(menuEntry.optionLabels) == "table") and #menuEntry.optionLabels>0 then
 							--addCombo(x,y,w,h, name,options, selected, target, onchange)
-							local title = getTextOrNull("UI_Config_"..menuEntry.title) or menuEntry.title
+							local title = ecc_getText(gameOptionName, menuEntry.noTranslate)
 
 							local labels = {}
 							for k,option in pairs(menuEntry.optionLabels) do
-								table.insert(labels, getTextOrNull("UI_Config_"..menuEntry.title.."_option"..k) or option)
+								table.insert(labels, ecc_getText(option, menuEntry.noTranslate, "_option"))
 							end
 
 							local box = self:addCombo(x,y,200,20, title, labels)
 							if menuEntry.tooltip then
-								local tooltip = getTextOrNull("UI_Config_"..menuEntry.title.."_tooltip") or menuEntry.tooltip
+								local tooltip = ecc_getText(gameOptionName, menuEntry.noTranslate, "_tooltip")
 								box:setToolTipMap({defaultTooltip = tooltip})
 							end
 							local gameOption = GameOption:new(gameOptionName, box)
@@ -253,7 +258,7 @@ function MainOptions:create() -- override
 		if isClient() then
 			if not (isAdmin() or isCoopHost()) then
 				invalidAccess = true
-				addText(getText("IGUI_NotHostNotAdminAccessDenied"), UIFont.Medium, 1, 1, 1, 1, -125)
+				addText(getText("UI_NotHostNotAdminAccessDenied"), UIFont.Medium, 1, 1, 1, 1, -125)
 			end
 		end
 
@@ -261,11 +266,11 @@ function MainOptions:create() -- override
 		else
 			invalidAccess = true
 			if (not getPlayer() and mod.menuSpecificAccess=="ingame") then
-				addText(getText("IGUI_InGameAccessOnly"), UIFont.Medium, 1, 1, 1, 1, -125)
+				addText(getText("UI_InGameAccessOnly"), UIFont.Medium, 1, 1, 1, 1, -125)
 			end
 			if (getPlayer() and mod.menuSpecificAccess=="mainmenu") then
-				addText(getText("IGUI_MainMenuAccessOnly1"), UIFont.Medium, 1, 1, 1, 1, -125)
-				addText(getText("IGUI_MainMenuAccessOnly2"), UIFont.Small, 1, 1, 1, 1, -125)
+				addText(getText("UI_MainMenuAccessOnly1"), UIFont.Medium, 1, 1, 1, 1, -125)
+				addText(getText("UI_MainMenuAccessOnly2"), UIFont.Small, 1, 1, 1, 1, -125)
 			end
 			addText(" ", UIFont.Medium)
 		end
