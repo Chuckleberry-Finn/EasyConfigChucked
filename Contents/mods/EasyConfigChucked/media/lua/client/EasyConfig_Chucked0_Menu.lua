@@ -251,7 +251,7 @@ function MainOptions:create() -- override
 	for modId,mod in pairs(EasyConfig_Chucked.mods) do
 
 		self.addY = 0
-		self:addPage(string.upper(mod.name))
+		self:addPage(string.upper(getTextOrNull("UI_ConfigMODID_"..mod.modId) or mod.modId))
 
 		local invalidAccess = false
 
