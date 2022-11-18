@@ -141,7 +141,7 @@ function EasyConfig_Chucked.setMenuEntry(menu,gameOptionName,label)
 	if menuEntry then
 		local _label = tostring(label)
 		if menuEntry.options then
-			if menuEntry.optionsKeys[_label] then
+			if menuEntry.optionsKeys and menuEntry.optionsKeys[_label] then
 				menuEntry.selectedIndex = menuEntry.optionsKeys[_label][1]
 				menuEntry.selectedValue = menuEntry.optionsKeys[_label][2]
 				menuEntry.selectedLabel = _label
