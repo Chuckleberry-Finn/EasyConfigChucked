@@ -1,7 +1,9 @@
 version=1
 id=2529746725
 title=Easy Config Chucked
-description=Easy to use custom mod menu used with mods I make.
+description=[h3]Easy to use custom mod menu.[/h3]
+description=
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/patreon.png[/img][/url]
 description=
 description=[h1]If you're having an issue or encountering errors:[/h1]
 description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
@@ -11,18 +13,14 @@ description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
 description=Uploaded to any online text viewer, [url=https://pastebin.com/]pastebin[/url] is recomended.
 description=Share the link in a comment below.
 description=
-description=[h1]Current mods using EasyConfig:[/h1]
-description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2458631365]Expanded Helicopter Events[/url][/h2]
-description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2398253681]Conditional Speech[/url][/h2]
-description=[h2][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2366717227]Swap It[/url][/h2]
-description=
-description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
-description=
-description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck![/b][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/Vanilla-Weapons-Expanded/main/Contents/mods/VanillaWeaponsExpanded/patreon/Patreon%20Logo.png[/img][/url]
+description=[h2]Current mods using EasyConfig:[/h2]
+description=[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2458631365]Expanded Helicopter Events[/url][/h3]
+description=[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2398253681]Conditional Speech[/url][/h3]
+description=[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2366717227]Swap It[/url][/h3]
 description=
 description=
 description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
-description=Tags:B41,Framework
+description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
 tags=Build 41;Framework;Interface;Misc;Multiplayer
 visibility=public
