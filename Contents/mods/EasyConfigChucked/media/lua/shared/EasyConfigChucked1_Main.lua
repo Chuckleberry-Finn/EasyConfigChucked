@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(print("Easy-Config-Chucked: ver:0.3-MainMenuESC-HOTFIX"))
+Events.OnGameBoot.Add(print("Easy-Config-Chucked: AUG_03_23"))
 ---Original EasyConfig found in Sandbox+ (author: derLoko)
 
 EasyConfig_Chucked = EasyConfig_Chucked or {}
