@@ -1,7 +1,8 @@
 version=1
 id=2529746725
 title=Easy Config Chucked
-description=[h3]Easy to use custom mod menu.[/h3]
+description=[h1]Easy to use custom mod menu API.[/h1]
+description=[h2]Adds MP sensitive custom mod-options.[/h2]
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url]
 description=
