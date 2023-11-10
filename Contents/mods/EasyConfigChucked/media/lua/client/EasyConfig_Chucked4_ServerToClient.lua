@@ -1,5 +1,9 @@
 require "EasyConfigChucked1_Main"
 
+local modCountSystem = require "chuckleberryFinnModding_modCountSystem"
+if modCountSystem then modCountSystem.pullAndAddModID()
+else print("ERR: MISSING MOD: `ChuckleberryFinnAlertSystem` (Workshop ID: `3077900375`)") end
+
 local function onCommand(_module, _command, _dataA, _dataB)
 	if _module=="ConfigFile" then
 		if _command=="SendSettings" then
