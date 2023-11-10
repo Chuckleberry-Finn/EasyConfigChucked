@@ -4,6 +4,11 @@ require "ISUI/ISControllerTestPanel"
 require "ISUI/ISVolumeControl"
 require "defines"
 
+local modCountSystem = require "chuckleberryFinnModding_modCountSystem"
+if modCountSystem then modCountSystem.pullAndAddModID()
+else print("ERR: MISSING MOD: `ChuckleberryFinnAlertSystem` (Workshop ID: `3077900375`)") end
+
+
 local GameOption = ISBaseObject:derive("GameOption")
 
 function GameOption:new(name, control, arg1, arg2)
