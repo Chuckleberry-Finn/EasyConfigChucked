@@ -4,25 +4,18 @@ title=Easy Config Chucked
 description=[h1]Easy to use custom mod menu API.[/h1]
 description=[h2]Adds MP sensitive custom mod-options.[/h2]
 description=
-description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url]
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url][url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner3.png[/img][/url]
 description=
-description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner1.png[/img][/url]
-description=
-description=[h1]If you're having an issue or encountering errors:[/h1]
-description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
-description=(This will force a download of the latest version.)
-description=[b]If the problem persists, please supply a error log, which can be found here:[/b]
-description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
-description=Uploaded to any online text viewer, [url=https://pastebin.com/]pastebin[/url] is recomended.
-description=Share the link in a comment below.
-description=
-description=[h2]Current mods using EasyConfig:[/h2]
-description=[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2458631365]Expanded Helicopter Events[/url][/h3]
-description=[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2398253681]Conditional Speech[/url][/h3]
-description=[h3][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2366717227]Swap It[/url][/h3]
+description=[url=https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bingo.png][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/readThrough.png[/img][/url]
+description=[url=https://steamcommunity.com/workshop/filedetails/discussion/2503622437/3198119216812488644][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/FAQ.png[/img][/url]
+description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/noModPacks.png[/img]
+description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bugHunt.png[/img]
+description=[quote][b]Windows:[/b] %userprofile%\Zomboid\console.txt[/quote]
+description=[quote][b]Mac/Linux:[/b] $User\Zomboid\console.txt[/quote]
+description=Upload this file [b]in entirety[/b] to [url=https://github.com/Chuckleberry-Finn/Skill-Recovery-Journal]Github[/url] as an issue.
+description=Share the link in a comment below if it is urgent.
 description=
 description=
-description=Original EasyConfig found in Sandbox+ (author: derLoko)
 description=
 description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
 tags=Build 41;Framework;Interface;Misc;Multiplayer

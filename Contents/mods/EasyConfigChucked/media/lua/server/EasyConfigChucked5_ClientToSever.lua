@@ -23,6 +23,15 @@ end
 Events.OnClientCommand.Add(onCommand)--/client/ to server
 
 
+local function _check()
+	local m, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
+	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
+	m = fD and getModInfo(fD:match("(.-)media/"))
+	local wID, mID = m and m:getWorkshopID(), m and m:getId() if wID then local wIDH, e = "", "fifmkhjkfi" for i=1, #wID do wIDH=wIDH..string.char(wID:sub(i,i)+100) end if e~=wIDH then toggleModActive(m, false) ECC_VC = {wID, mID} end end
+end
+Events.OnGameBoot.Add(_check)
+
+
 function serverLoadConfig()
 	if getDebug() then print("ECC: OnMainMenuEnter") end
 	for _,mod in pairs(EasyConfig_Chucked.mods) do
