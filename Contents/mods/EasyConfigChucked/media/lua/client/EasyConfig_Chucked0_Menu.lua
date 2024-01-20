@@ -128,6 +128,36 @@ function MainOptions:create() -- override
 		return box
 	end
 
+	function addSlider(text, min, max, step)
+		-- layout: label, slider, currentValue 
+		local label = ISLabel:new(x,y+self.addY,height, text, 1,1,1,1, UIFont.Small, false)
+		label:initialise()
+		self.mainPanel:addChild(label)
+		
+		local box = ISTextEntryBox:new("", x+230,y+self.addY, 50,20)
+		box.font = UIFont.Small
+		box:initialise()
+		box:instantiate()
+		box:setOnlyNumbers(true)
+		self.mainPanel:addChild(box)
+
+		local sliderHandler = function(target, newvalue, self)
+			box:setText(tostring(newvalue))
+		end
+		
+		local slider = ISSliderPanel:new(x+20,y+self.addY, 200,20, nil, sliderHandler) 
+		slider:initialise()
+		slider:instantiate()
+		slider.valueLabel = false
+		slider.isSlider = true
+
+		self.mainPanel:addChild(slider)
+		self.mainPanel:insertNewLineOfButtons(slider)
+		
+		self.addY = self.addY + height +5
+		return slider
+	end	
+
 	--new addSpace
 	function addSpace()
 		self.addY = self.addY + height +5
