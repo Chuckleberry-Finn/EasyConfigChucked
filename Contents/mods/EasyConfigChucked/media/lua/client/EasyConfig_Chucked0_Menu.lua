@@ -257,6 +257,22 @@ function MainOptions:create() -- override
 						end
 					end
 
+					-- SLIDER ---
+					if menuEntry.type == "Slider" then
+						local title = ecc_getText(gameOptionName, menuEntry.noTranslate)
+						local slider = addSlider(title, menuEntry.min, menuEntry.max, menuEntry.step)
+						local gameOption = GameOption:new(gameOptionName, slider)
+						function gameOption.toUI(self)
+							local slider = self.control
+							slider:setCurrentValue(menuEntry.selectedValue)
+						end
+						function gameOption.apply(self)
+							local slider = self.control
+							menuEntry.selectedValue = slider.currentValue
+						end
+						self.gameOptions:add(gameOption)
+					end
+
 					--[[
 					--- SPIN BOX ---
 					if menuEntry.type == "Spinbox" and menuEntry.title and menuEntry.optionLabels then
