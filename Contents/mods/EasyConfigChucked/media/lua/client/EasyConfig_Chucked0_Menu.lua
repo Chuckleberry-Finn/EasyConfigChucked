@@ -151,6 +151,13 @@ function MainOptions:create() -- override
 		slider.valueLabel = false
 		slider.isSlider = true
 
+		box.onCommandEntered = function(self)
+			local value = tonumber(self:getText())
+			if value then
+				slider:setCurrentValue(value)
+			end
+		end
+		
 		self.mainPanel:addChild(slider)
 		self.mainPanel:insertNewLineOfButtons(slider)
 		
