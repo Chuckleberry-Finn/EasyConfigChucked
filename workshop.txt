@@ -10,7 +10,7 @@ description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubuserconten
 description=
 description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/noModPacks.png[/img]
 description=
-description=
+description=[url=https://chuckleberry-finn.github.io/issues/][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bugHunt.png[/img][/url]
 description=
 description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
 tags=Build 41;Framework;Interface;Misc;Multiplayer
