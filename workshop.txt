@@ -12,6 +12,9 @@ description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages
 description=
 description=[url=https://chuckleberry-finn.github.io/issues/][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bugHunt.png[/img][/url]
 description=
+description=[url=https://indifferentbroccoli.com/?fpr=chuckleberry][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/refs/heads/main/IB_BANNER/IB_BANNER.gif[/img][/url]
+description=
+description=
 description=[h3]Copyright 2026 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
 tags=Build 41;Framework;Interface;Misc;Multiplayer
 visibility=public
